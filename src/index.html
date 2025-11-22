@@ -1,0 +1,838 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ahmad Abrar - Portfolio</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Inter Font -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;700;900&display=swap" rel="stylesheet">
+
+    <style>
+        html {
+            scroll-behavior: smooth;
+            scroll-padding-top: 70px; 
+        }
+
+        /* Custom Styles */
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #0a0a0a; /* Near-black */
+            color: #f0f0f0; /* Off-white text */
+            overflow-x: hidden;
+        }
+
+        /* Custom Pink Color Variables */
+        :root {
+            --theme-pink: #f472b6; /* Tailwind's pink-400 */
+            --theme-pink-dark: #ec4899; /* Tailwind's pink-500 */
+            --theme-pink-light: #fbcfe8; /* Tailwind's pink-200 */
+            --theme-gray-light: #4b5563; /* Tailwind's gray-600 */
+        }
+
+        /* Animated Aurora Background (Subtle Glow) */
+        #aurora-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            z-index: -2; /* Behind the canvas and content */
+            opacity: 0.2;
+            overflow: hidden;
+            pointer-events: none;
+        }
+        .aurora-shape {
+            position: absolute;
+            width: 40vw;
+            height: 40vw;
+            min-width: 300px;
+            min-height: 300px;
+            background: radial-gradient(circle, var(--theme-pink) 0%, transparent 70%);
+            filter: blur(100px);
+            border-radius: 50%;
+            animation: moveAurora 25s linear infinite alternate;
+        }
+        .aurora-shape-2 {
+            top: 50vh;
+            left: 50vw;
+            background: radial-gradient(circle, var(--theme-pink-dark) 0%, transparent 70%);
+            animation: moveAurora 35s linear infinite alternate-reverse;
+            animation-delay: -5s;
+        }
+        @keyframes moveAurora {
+            0% { transform: translate(-20vw, -20vh) scale(0.8); }
+            100% { transform: translate(20vw, 20vh) scale(1.2); }
+        }
+
+        /* 3D Canvas Positioning */
+        #pagoda-canvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            z-index: 0; /* Above the Aurora, below the content */
+            opacity: 0.7;
+        }
+
+        /* Page Section Styling */
+        .page {
+            position: relative; 
+            z-index: 2;
+        }
+
+        /* Navigation */
+        .nav-link.active {
+            color: var(--theme-pink);
+            border-bottom: 2px solid var(--theme-pink);
+        }
+        .nav-link {
+            transition: all 0.2s ease-in-out;
+            border-bottom: 2px solid transparent;
+        }
+        .nav-link:hover {
+            color: var(--theme-pink-light);
+        }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #0a0a0a; }
+        ::-webkit-scrollbar-thumb {
+            background: var(--theme-gray-light);
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover { background: var(--theme-pink); }
+
+        /* Timeline Styling */
+        .timeline-container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background-color: var(--theme-gray-light);
+            left: 1rem;
+            z-index: 1;
+        }
+        @media (min-width: 768px) {
+            .timeline-container::before { left: 1.5rem; }
+        }
+        .timeline-dot {
+            content: '';
+            position: absolute;
+            top: 0.5rem;
+            width: 1rem;
+            height: 1rem;
+            background-color: var(--theme-pink);
+            border: 2px solid #0a0a0a;
+            border-radius: 50%;
+            left: 1rem;
+            transform: translateX(-50%);
+            z-index: 10;
+        }
+        @media (min-width: 768px) {
+            .timeline-dot { left: 1.5rem; }
+        }
+        .timeline-container::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 1rem;
+            transform: translateX(-50%);
+            width: 4px;
+            height: 70px;
+            background: linear-gradient(to top, #0a0a0a, rgba(10, 10, 10, 0)); 
+            z-index: 2;
+        }
+        @media (min-width: 768px) {
+            .timeline-container::after {
+                left: 1.5rem;
+                margin-left: -2px;
+            }
+        }
+
+        /* Glassmorphism Card styles */
+        .award-card, .skill-card, .timeline-card {
+            background-color: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+        }
+        .award-card:hover, .skill-card:hover, .timeline-card:hover {
+            background-color: rgba(255, 255, 255, 0.07);
+            border-color: var(--theme-pink);
+            transform: translateY(-5px) scale(1.02);
+            box-shadow: 0 10px 30px rgba(244, 114, 182, 0.2);
+        }
+
+        /* Pink Glow Effects & Header */
+        .text-pink-400 { color: var(--theme-pink); }
+        .section-header span {
+            color: var(--theme-pink);
+            text-shadow: 0 0 8px var(--theme-pink);
+        }
+        .bg-pink-500 {
+            background-color: var(--theme-pink-dark);
+            box-shadow: 0 0 10px rgba(236, 72, 153, 0.5);
+            transition: all 0.3s ease;
+        }
+        .bg-pink-500:hover {
+            box-shadow: 0 0 20px rgba(236, 72, 153, 0.8);
+            transform: translateY(-2px);
+        }
+        
+        /* Animation Classes */
+        .fade-in-section, .flip-in-card {
+            opacity: 0;
+            transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+        }
+        .fade-in-section { transform: translateY(30px); }
+        .flip-in-card {
+            transform: perspective(1000px) rotateY(90deg); 
+            transform-origin: left;
+        }
+        .fade-in-section.is-visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        .flip-in-card.is-visible {
+            opacity: 1;
+            transform: perspective(1000px) rotateY(0deg);
+        }
+
+    </style>
+</head>
+<body class="bg-[#0a0a0a]">
+
+    <!-- Aurora Background -->
+    <div id="aurora-bg">
+        <div class="aurora-shape" style="top: 10%; left: 10%;"></div>
+        <div class="aurora-shape aurora-shape-2" style="bottom: 5%; right: 10%;"></div>
+    </div>
+
+    <!-- Preloader -->
+    <div id="preloader" class="fixed top-0 left-0 w-screen h-screen bg-[#0a0a0a] z-[9999] flex justify-center items-center transition-opacity duration-500 ease-out">
+        <div class="w-12 h-12 border-4 border-gray-800 border-t-pink-400 rounded-full animate-spin"></div>
+    </div>
+
+    <!-- Header & Navigation -->
+    <header class="fixed top-0 left-0 right-0 z-50 bg-black/50 backdrop-blur-md border-b border-white/10">
+        <nav class="container mx-auto px-6 py-4 flex justify-between items-center">
+            <!-- Logo/Name -->
+            <a href="#home" class="text-2xl font-bold text-white nav-link-header">
+                Ahmad<span class="text-pink-400">.</span>Abrar
+            </a>
+            
+            <!-- Mobile Menu Button -->
+            <div class="md:hidden">
+                <button id="mobile-menu-btn" class="text-white focus:outline-none">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path></svg>
+                </button>
+            </div>
+
+            <!-- Desktop Navigation -->
+            <div class="hidden md:flex space-x-6 items-center">
+                <a href="#home" class="nav-link text-gray-200 hover:text-pink-400 active">Home</a>
+                <a href="#about" class="nav-link text-gray-200 hover:text-pink-400">About</a>
+                <a href="#experience" class="nav-link text-gray-200 hover:text-pink-400">Experience</a>
+                <a href="#awards" class="nav-link text-gray-200 hover:text-pink-400">Awards</a>
+                <a href="#contact" class="bg-pink-500 text-black px-4 py-2 rounded-md font-medium transition-all">
+                    Contact
+                </a>
+            </div>
+        </nav>
+        
+        <!-- Mobile Menu -->
+        <div id="mobile-menu" class="hidden md:hidden bg-black/80 backdrop-blur-md">
+            <a href="#home" class="nav-link block px-6 py-3 text-gray-200 hover:text-pink-400 active">Home</a>
+            <a href="#about" class="nav-link block px-6 py-3 text-gray-200 hover:text-pink-400">About</a>
+            <a href="#experience" class="nav-link block px-6 py-3 text-gray-200 hover:text-pink-400">Experience</a>
+            <a href="#awards" class="nav-link block px-6 py-3 text-gray-200 hover:text-pink-400">Awards</a>
+            <a href="#contact" class="block px-6 py-3 text-gray-200">
+                <span class="bg-pink-500 text-black px-4 py-2 rounded-md font-medium transition-all">
+                    Contact
+                </span>
+            </a>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="pt-16">
+
+        <!-- ===== HOME (3D Section) ===== -->
+        <section id="home" class="page relative h-screen flex items-center justify-center text-center overflow-hidden">
+            <!-- 3D Canvas Container -->
+            <div id="pagoda-canvas"></div>
+            
+            <!-- Home Content -->
+            <div class="z-10 relative max-w-3xl mx-auto px-4">
+                <h1 class="text-5xl md:text-7xl font-black text-white mb-4 leading-tight">
+                    Hello, I'm <span class="text-pink-400">Ahmad Abrar</span>
+                </h1>
+                <p class="text-xl md:text-2xl text-gray-200 font-light">
+                    High School Student, Web Developer, and Cybersecurity Enthusiast
+                </p>
+                <div class="mt-8 space-x-4">
+                    <a href="#experience" class="bg-pink-500 text-black px-6 py-3 rounded-md font-semibold text-lg transition-all">
+                        View My Work
+                    </a>
+                    <a href="#contact" class="border-2 border-pink-400 text-pink-400 px-6 py-3 rounded-md font-semibold text-lg hover:bg-pink-400 hover:text-black transition-all">
+                        Get In Touch
+                    </a>
+                </div>
+            </div>
+        </section>
+
+        <!-- ===== ABOUT ME ===== -->
+        <section id="about" class="page py-20 md:py-32 fade-in-section">
+            <div class="container mx-auto px-6 max-w-4xl">
+                <h2 class="text-4xl font-bold text-center text-white mb-4">About <span>Me</span></h2>
+                <p class="text-lg text-gray-300 text-center max-w-3xl mx-auto mb-16">
+                    A brief introduction to who I am and what I do.
+                </p>
+
+                <!-- Bio -->
+                <div class="text-center mb-16">
+                    <img src="https://placehold.co/150x150/f472b6/0a0a0a?text=AA" alt="Ahmad Abrar" class="w-32 h-32 rounded-full mx-auto mb-6 border-4 border-pink-400">
+                    <h3 class="text-3xl font-bold text-white mb-4">Who I Am</h3>
+                    <p class="text-gray-300 text-lg mb-6 leading-relaxed">
+                        I am a highly motivated high school student at Old Scona Academic, currently enrolled in Math, French, and Computer Science IB courses. With a passion for technology and leadership, I thrive in challenging environments, from cybersecurity competitions to web development projects.
+                    </p>
+                    <p class="text-gray-300 text-lg leading-relaxed">
+                        My goal is to leverage my skills in software development, cybersecurity, and critical thinking to create innovative solutions and make a meaningful impact.
+                    </p>
+                </div>
+
+                <!-- Skills Section -->
+                <div class="mt-20">
+                    <h3 class="text-3xl font-bold text-white text-center mb-10">My <span>Skills</span></h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                        <!-- Digital Skills -->
+                        <div class="skill-card p-6 rounded-lg flip-in-card">
+                            <h4 class="text-xl font-semibold text-pink-400 mb-3">Digital Skills</h4>
+                            <ul class="list-disc list-inside text-gray-200 space-y-2">
+                                <li>Web Development</li>
+                                <li>App Development</li>
+                                <li>Database Management</li>
+                                <li>Cybersecurity & Network Management</li>
+                            </ul>
+                        </div>
+                        
+                        <!-- Core Expertise -->
+                        <div class="skill-card p-6 rounded-lg flip-in-card" style="transition-delay: 0.1s;">
+                            <h4 class="text-xl font-semibold text-pink-400 mb-3">Core Expertise</h4>
+                            <ul class="list-disc list-inside text-gray-200 space-y-2">
+                                <li>Critical Thinking</li>
+                                <li>Communication</li>
+                                <li>Teamwork & Leadership</li>
+                                <li>Time Management & Multitasking</li>
+                            </ul>
+                        </div>
+
+                        <!-- Languages -->
+                        <div class="skill-card p-6 rounded-lg flip-in-card" style="transition-delay: 0.2s;">
+                            <h4 class="text-xl font-semibold text-pink-400 mb-3">Languages</h4>
+                            <ul class="list-disc list-inside text-gray-200 space-y-2">
+                                <li>English (Fluent)</li>
+                                <li>Urdu (Fluent)</li>
+                                <li>Hindi (Fluent)</li>
+                                <li>French (IB Level)</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Key Involvements -->
+                <div class="mt-20">
+                    <h3 class="text-3xl font-bold text-white text-center mb-10">Activities & <span>Leadership</span></h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                        <div class="skill-card p-6 rounded-lg fade-in-section">
+                            <h4 class="text-xl font-semibold text-pink-400 mb-3">CyberPatriot / PicoCTF</h4>
+                            <p class="text-gray-300">Actively compete in global cybersecurity competitions, achieving top-tier rankings.</p>
+                        </div>
+                        <div class="skill-card p-6 rounded-lg fade-in-section" style="transition-delay: 0.1s;">
+                            <h4 class="text-xl font-semibold text-pink-400 mb-3">Model UN (HSMUN)</h4>
+                            <p class="text-gray-300">Represented countries in high-level debates, researching policies and negotiating resolutions.</p>
+                        </div>
+                        <div class="skill-card p-6 rounded-lg fade-in-section" style="transition-delay: 0.2s;">
+                            <h4 class="text-xl font-semibold text-pink-400 mb-3">Muslim Student Association</h4>
+                            <p class="text-gray-300">Support and organize events to enhance student engagement and cultural dialogue.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ===== EXPERIENCE (Timeline) ===== -->
+        <section id="experience" class="page py-20 md:py-32">
+            <div class="container mx-auto px-6 max-w-3xl">
+                <h2 class="text-4xl font-bold text-center text-white mb-4 fade-in-section">My <span>Experience</span></h2>
+                <p class="text-lg text-gray-300 text-center max-w-3xl mx-auto mb-16 fade-in-section">
+                    A timeline of my professional, project, and volunteer work.
+                </p>
+
+                <!-- Timeline Container (SINGLE-SIDED) -->
+                <div class="timeline-container relative max-w-4xl mx-auto">
+                    
+                    <!-- Timeline Item 1 -->
+                    <div class="timeline-item mb-12 pl-8 md:pl-12">
+                        <div class="timeline-dot"></div>
+                        <div class="timeline-card p-6 rounded-lg shadow-lg flip-in-card">
+                            <p class="text-pink-400 font-semibold">Feb 2025 - Present</p>
+                            <h3 class="text-2xl font-bold text-white mt-1">Volunteer</h3>
+                            <p class="text-lg text-gray-300 font-medium">Pakistan Canada Association of Edmonton</p>
+                            <p class="text-gray-400 mt-3">
+                                Coordinated large-scale events for 300+ attendees; implemented hands-on logistics, technical setups, and operations.
+                            </p>
+                        </div>
+                    </div>
+                    
+                    <!-- Timeline Item 2 -->
+                    <div class="timeline-item mb-12 pl-8 md:pl-12">
+                        <div class="timeline-dot"></div>
+                        <div class="timeline-card p-6 rounded-lg shadow-lg flip-in-card" style="transition-delay: 0.1s;">
+                            <p class="text-pink-400 font-semibold">Sep 2024 - Present</p>
+                            <h3 class="text-2xl font-bold text-white mt-1">Tutor</h3>
+                            <p class="text-lg text-gray-300 font-medium">Life Long Learners (Non-Profit)</p>
+                            <p class="text-gray-400 mt-3">
+                                Tutored middle school students in Math, Science, and French (130+ hours). Awarded Most Hours Committed and Most Sessions Led.
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- Timeline Item 3 -->
+                    <div class="timeline-item mb-12 pl-8 md:pl-12">
+                        <div class="timeline-dot"></div>
+                        <div class="timeline-card p-6 rounded-lg shadow-lg flip-in-card" style="transition-delay: 0.2s;">
+                            <p class="text-pink-400 font-semibold">Jan 2024 - Aug 2024</p>
+                            <h3 class="text-2xl font-bold text-white mt-1">Lead Web Developer & Project Director</h3>
+                            <p class="text-lg text-gray-300 font-medium">Project YUZU</p>
+                            <p class="text-gray-400 mt-3">
+                                Led client projects and design of user experience strategies. Developed intuitive UIs that boosted engagement by 200%.
+                            </p>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </section>
+
+        <!-- ===== AWARDS ===== -->
+        <section id="awards" class="page py-20 md:py-32 fade-in-section">
+            <div class="container mx-auto px-6 max-w-6xl">
+                <h2 class="text-4xl font-bold text-center text-white mb-4">Honors & <span>Awards</span></h2>
+                <p class="text-lg text-gray-300 text-center max-w-3xl mx-auto mb-16">
+                    A collection of my achievements in cybersecurity, computing, and leadership.
+                </p>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    
+                    <div class="award-card p-6 rounded-lg flip-in-card">
+                        <h3 class="text-xl font-bold text-pink-400">1st Place, Standard Division</h3>
+                        <p class="text-gray-200 text-lg">NatHacks 2025 (MedTech)</p>
+                        <p class="text-gray-400 mt-2">Competed in an undivided field alongside graduate and PhD-level teams.</p>
+                    </div>
+                    
+                    <div class="award-card p-6 rounded-lg flip-in-card" style="transition-delay: 0.1s;">
+                        <h3 class="text-xl font-bold text-pink-400">1st Place, Internationally</h3>
+                        <p class="text-gray-200 text-lg">Maple Defender Cyber Challenge</p>
+                        <p class="text-gray-400 mt-2">Team Captain; received commendations from Govt. of Alberta, MLA, and CO.</p>
+                    </div>
+
+                    <div class="award-card p-6 rounded-lg flip-in-card" style="transition-delay: 0.2s;">
+                        <h3 class="text-xl font-bold text-pink-400">3rd Place, Nationally</h3>
+                        <p class="text-gray-200 text-lg">CyberTitan Nationals XIII</p>
+                        <p class="text-gray-400 mt-2">Significant improvement from 11th place finish in CyberTitan XII.</p>
+                    </div>
+                    
+                    <div class="award-card p-6 rounded-lg flip-in-card" style="transition-delay: 0.3s;">
+                        <h3 class="text-xl font-bold text-pink-400">Top 0.5% Globally</h3>
+                        <p class="text-gray-200 text-lg">CyberPatriot XVII (25 / 5050 teams)</p>
+                        <p class="text-gray-400 mt-2">Also achieved Top 1.24% in CyberPatriot XVI (64 / 5183 teams).</p>
+                    </div>
+
+                    <div class="award-card p-6 rounded-lg flip-in-card" style="transition-delay: 0.4s;">
+                        <h3 class="text-xl font-bold text-pink-400">Top 0.36% Globally</h3>
+                        <p class="text-gray-200 text-lg">PicoCTF (41 / 11517 teams)</p>
+                        <p class="text-gray-400 mt-2">Demonstrated strong skills in a massive global competition.</p>
+                    </div>
+
+                    <div class="award-card p-6 rounded-lg flip-in-card" style="transition-delay: 0.5s;">
+                        <h3 class="text-xl font-bold text-pink-400">High Score (71 / 75)</h3>
+                        <p class="text-gray-200 text-lg">Canadian Computing Competition (Junior)</p>
+                        <p class="text-gray-400 mt-2">Placed in the top tier of competitors.</p>
+                    </div>
+
+                </div>
+            </div>
+        </section>
+
+        <!-- ===== CONTACT ===== -->
+        <section id="contact" class="page py-20 md:py-32 fade-in-section">
+            <div class="container mx-auto px-6 max-w-3xl">
+                <h2 class="text-4xl font-bold text-center text-white mb-4">Get In <span>Touch</span></h2>
+                <p class="text-lg text-gray-300 text-center max-w-3xl mx-auto mb-16">
+                    I'm always open to discussing new projects, creative ideas, or opportunities.
+                </p>
+
+                <!-- Contact Form (Mailto) -->
+                <form 
+                    action="mailto:ahmad.abrar2385@gmail.com" 
+                    method="POST" 
+                    enctype="text/plain"
+                    class="space-y-6"
+                >
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <!-- Name -->
+                        <div>
+                            <label for="name" class="block text-sm font-medium text-gray-300 mb-2">Your Name</label>
+                            <input 
+                                type="text" 
+                                id="name" 
+                                name="name" 
+                                required 
+                                class="w-full bg-gray-900 border border-gray-700 rounded-lg p-3 text-gray-200 focus:outline-none focus:ring-2 focus:ring-pink-400 transition-all"
+                            >
+                        </div>
+                        <!-- Email -->
+                        <div>
+                            <label for="email" class="block text-sm font-medium text-gray-300 mb-2">Your Email</label>
+                            <input 
+                                type="email" 
+                                id="email" 
+                                name="email" 
+                                required 
+                                class="w-full bg-gray-900 border border-gray-700 rounded-lg p-3 text-gray-200 focus:outline-none focus:ring-2 focus:ring-pink-400 transition-all"
+                            >
+                        </div>
+                    </div>
+                    
+                    <!-- Subject -->
+                    <div>
+                        <label for="subject" class="block text-sm font-medium text-gray-300 mb-2">Subject</label>
+                        <input 
+                            type="text" 
+                            id="subject" 
+                            name="subject" 
+                            required 
+                            class="w-full bg-gray-900 border border-gray-700 rounded-lg p-3 text-gray-200 focus:outline-none focus:ring-2 focus:ring-pink-400 transition-all"
+                        >
+                    </div>
+
+                    <!-- Message -->
+                    <div>
+                        <label for="message" class="block text-sm font-medium text-gray-300 mb-2">Your Message</label>
+                        <textarea 
+                            id="message" 
+                            name="message" 
+                            rows="5" 
+                            required 
+                            class="w-full bg-gray-900 border border-gray-700 rounded-lg p-3 text-gray-200 focus:outline-none focus:ring-2 focus:ring-pink-400 transition-all"
+                        ></textarea>
+                    </div>
+
+                    <!-- Submit Button -->
+                    <div class="text-center">
+                        <button 
+                            type="submit" 
+                            class="bg-pink-500 text-black px-8 py-3 rounded-md font-semibold text-lg transition-all"
+                        >
+                            Send Message
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Simple Footer -->
+    <footer class="bg-black/50 border-t border-white/10 py-8 text-center relative z-10">
+        <p class="text-gray-500">&copy; <span id="copyright-year"></span> Ahmad Abrar. All rights reserved.</p>
+    </footer>
+
+
+    <!-- Three.js and OrbitControls Imports -->
+    <script type="importmap">
+    {
+        "imports": {
+            "three": "https://cdn.skypack.dev/three@0.132.2"
+        }
+    }
+    </script>
+
+    <!-- Main JS (Navigation & Three.js) -->
+    <script type="module">
+        import * as THREE from 'three';
+
+        /* ===== Navigation & Scroll Logic ===== */
+        const navLinks = document.querySelectorAll('.nav-link');
+        const headerLinks = document.querySelectorAll('.nav-link-header, a[href="#experience"], a[href="#contact"]');
+        const mobileMenuBtn = document.getElementById('mobile-menu-btn');
+        const mobileMenu = document.getElementById('mobile-menu');
+        const sections = document.querySelectorAll('section[id]'); 
+        const headerOffset = 70;
+        const homeSection = document.getElementById('home');
+        const canvas = document.getElementById('pagoda-canvas');
+
+        function updateActiveLink(targetId) {
+            navLinks.forEach(link => {
+                link.classList.remove('active');
+                if (link.getAttribute('href') === targetId) {
+                    link.classList.add('active');
+                }
+            });
+        }
+
+        // Handle navigation clicks
+        [...navLinks, ...headerLinks].forEach(link => {
+            link.addEventListener('click', () => {
+                mobileMenu.classList.add('hidden');
+            });
+        });
+
+        // Scroll listener to update active link and parallax
+        window.addEventListener('scroll', () => {
+            let current = '';
+            const scrollY = window.scrollY;
+
+            sections.forEach(section => {
+                const sectionTop = section.offsetTop;
+                if (scrollY >= sectionTop - headerOffset) {
+                    current = '#' + section.getAttribute('id');
+                }
+            });
+
+            // Parallax Effect for 3D canvas (vertical position)
+            if (scrollY < homeSection.offsetHeight) {
+                if (canvas) {
+                    canvas.style.transform = `translateY(${scrollY * 0.4}px)`;
+                    canvas.style.opacity = 0.7 - (scrollY / (homeSection.offsetHeight * 0.8));
+                }
+            }
+
+            if (current) {
+                 updateActiveLink(current);
+            }
+        });
+
+        // Mobile menu toggle
+        mobileMenuBtn.addEventListener('click', () => {
+            mobileMenu.classList.toggle('hidden');
+        });
+
+        // Set current year in footer
+        document.getElementById('copyright-year').textContent = new Date().getFullYear();
+
+        /* ===== Scroll Fade-In/Flip-In Animation ===== */
+        const sectionsToAnimate = document.querySelectorAll('.fade-in-section, .flip-in-card');
+        
+        const observerOptions = {
+            root: null,
+            rootMargin: '0px',
+            threshold: 0.15
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('is-visible');
+                    // observer.unobserve(entry.target); // Uncomment to run animation only once
+                }
+            });
+        }, observerOptions);
+
+        sectionsToAnimate.forEach(section => {
+            observer.observe(section);
+        });
+
+
+        /* ===== Three.js Scene (Crystal & Petals) ===== */
+        let scene, camera, renderer, crystal, petals;
+        const canvasContainer = document.getElementById('pagoda-canvas');
+        
+        // --- New Variables for Mouse Follow ---
+        let targetRotationX = 0;
+        let targetRotationY = 0;
+        const rotationSpeed = 0.005; 
+        const followDamping = 0.05; // How quickly the object follows the mouse
+
+        function initThreeJS() {
+            // Scene
+            scene = new THREE.Scene();
+
+            // Camera
+            camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+            camera.position.set(0, 0, 5);
+            camera.lookAt(0, 0, 0);
+
+            // Renderer
+            renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            renderer.setPixelRatio(window.devicePixelRatio);
+            if (canvasContainer) {
+                canvasContainer.appendChild(renderer.domElement);
+            }
+
+            // Lighting
+            const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
+            scene.add(ambientLight);
+            
+            const hemisphereLight = new THREE.HemisphereLight(0xfbcfe8, 0x330011, 1);
+            scene.add(hemisphereLight);
+
+            // Create Crystal (Wireframe Icosahedron)
+            const crystalGeo = new THREE.IcosahedronGeometry(2, 0);
+            const crystalMat = new THREE.MeshStandardMaterial({ 
+                color: 0xf472b6,
+                emissive: 0xec4899,
+                emissiveIntensity: 1,
+                wireframe: true,
+                transparent: true,
+                opacity: 0.8
+            });
+            crystal = new THREE.Mesh(crystalGeo, crystalMat);
+            scene.add(crystal);
+
+            // Create Sakura Petals (Particle System)
+            createPetals();
+
+            // Event Listeners for Parallax Rotation
+            window.addEventListener('mousemove', onMouseMoveParallax, false);
+            window.addEventListener('touchmove', onTouchMoveParallax, false);
+            window.addEventListener('resize', onWindowResize);
+            
+            // Start animation
+            animate();
+        }
+
+        function createPetals() {
+            const petalCount = 500;
+            const vertices = [];
+            for (let i = 0; i < petalCount; i++) {
+                const x = (Math.random() - 0.5) * 20; 
+                const y = Math.random() * 20 - 10; 
+                const z = (Math.random() - 0.5) * 20; 
+                vertices.push(x, y, z);
+            }
+            
+            const geometry = new THREE.BufferGeometry();
+            // Corrected Buffer Attribute
+            geometry.setAttribute('position', new THREE.Float32BufferAttribute(vertices, 3));
+            
+            const material = new THREE.PointsMaterial({
+                color: 0xfbcfe8,
+                size: 0.03,
+                transparent: true,
+                opacity: 0.7,
+                blending: THREE.AdditiveBlending,
+                depthWrite: false
+            });
+            
+            petals = new THREE.Points(geometry, material);
+            scene.add(petals);
+        }
+
+        function onWindowResize() {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        }
+        
+        /**
+         * Calculates target rotation based on normalized mouse position.
+         */
+        function onMouseMoveParallax(event) {
+            // Normalize mouse position (-1 to 1)
+            const normalizedX = (event.clientX / window.innerWidth) * 2 - 1;
+            const normalizedY = (event.clientY / window.innerHeight) * 2 - 1;
+
+            // X mouse movement controls Y rotation, Y mouse movement controls X rotation
+            // The scaling factor (0.5) determines the maximum rotation offset.
+            targetRotationY = normalizedX * -0.5; 
+            targetRotationX = normalizedY * -0.5; 
+        }
+
+        /**
+         * Calculates target rotation based on normalized touch position.
+         */
+        function onTouchMoveParallax(event) {
+            if (event.touches.length === 1) {
+                const touch = event.touches[0];
+                const normalizedX = (touch.clientX / window.innerWidth) * 2 - 1;
+                const normalizedY = (touch.clientY / window.innerHeight) * 2 - 1;
+
+                targetRotationY = normalizedX * -0.5;
+                targetRotationX = normalizedY * -0.5;
+                event.preventDefault(); // Prevent scrolling while interacting
+            }
+        }
+
+
+        function animate() {
+            requestAnimationFrame(animate);
+            
+            if (crystal) {
+                // 1. Passive continuous rotation (slow)
+                crystal.rotation.x += rotationSpeed * 0.05;
+                crystal.rotation.y += rotationSpeed * 0.1;
+                
+                // 2. Mouse Parallax/Follow Effect: Interpolate towards target
+                // This creates a smooth, dampened rotation as the mouse moves.
+                crystal.rotation.x += (targetRotationX - crystal.rotation.x) * followDamping;
+                crystal.rotation.y += (targetRotationY - crystal.rotation.y) * followDamping;
+            }
+
+            // Animate petals (falling and swirling)
+            if (petals) {
+                const positions = petals.geometry.attributes.position.array;
+                const time = Date.now() * 0.0001;
+                
+                for (let i = 0; i < positions.length; i += 3) {
+                    positions[i + 1] -= 0.01; 
+                    
+                    positions[i] += Math.sin(positions[i + 1] * 0.5 + time) * 0.002;
+                    positions[i + 2] += Math.cos(positions[i + 1] * 0.4 + time) * 0.002;
+                    
+                    // Reset at bottom
+                    if (positions[i + 1] < -10) { 
+                        positions[i + 1] = 10;
+                        positions[i] = (Math.random() - 0.5) * 20;
+                        positions[i + 2] = (Math.random() - 0.5) * 20;
+                    }
+                }
+                petals.geometry.attributes.position.needsUpdate = true;
+            }
+
+            renderer.render(scene, camera);
+        }
+
+        // Initialize Three.js on load
+        if (canvasContainer) {
+            initThreeJS();
+        }
+
+        /* ===== Preloader Logic ===== */
+        window.onload = () => {
+            const preloader = document.getElementById('preloader');
+            if (preloader) {
+                preloader.classList.add('loaded');
+                
+                setTimeout(() => {
+                    if (preloader) {
+                        preloader.remove();
+                    }
+                }, 600);
+            }
+        };
+
+    </script>
+
+</body>
+</html>
