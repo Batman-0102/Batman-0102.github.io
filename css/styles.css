@@ -1,0 +1,214 @@
+/* Portfolio Website Styles */
+
+/* Smooth Scrolling */
+html {
+    scroll-behavior: smooth;
+    scroll-padding-top: 70px; 
+}
+
+/* Base Body Styles */
+body {
+    font-family: 'Inter', sans-serif;
+    background-color: #0a0a0a; /* Near-black */
+    color: #f0f0f0; /* Off-white text */
+    overflow-x: hidden;
+}
+
+/* Custom Pink Color Variables */
+:root {
+    --theme-pink: #f472b6; /* Tailwind's pink-400 */
+    --theme-pink-dark: #ec4899; /* Tailwind's pink-500 */
+    --theme-pink-light: #fbcfe8; /* Tailwind's pink-200 */
+    --theme-gray-light: #4b5563; /* Tailwind's gray-600 */
+}
+
+/* Animated Aurora Background (Subtle Glow) */
+#aurora-bg {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    z-index: -2; /* Behind the canvas and content */
+    opacity: 0.2;
+    overflow: hidden;
+    pointer-events: none;
+}
+
+.aurora-shape {
+    position: absolute;
+    width: 40vw;
+    height: 40vw;
+    min-width: 300px;
+    min-height: 300px;
+    background: radial-gradient(circle, var(--theme-pink) 0%, transparent 70%);
+    filter: blur(100px);
+    border-radius: 50%;
+    animation: moveAurora 25s linear infinite alternate;
+}
+
+.aurora-shape-2 {
+    top: 50vh;
+    left: 50vw;
+    background: radial-gradient(circle, var(--theme-pink-dark) 0%, transparent 70%);
+    animation: moveAurora 35s linear infinite alternate-reverse;
+    animation-delay: -5s;
+}
+
+@keyframes moveAurora {
+    0% { transform: translate(-20vw, -20vh) scale(0.8); }
+    100% { transform: translate(20vw, 20vh) scale(1.2); }
+}
+
+/* 3D Canvas Positioning */
+#pagoda-canvas {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    z-index: 0; /* Above the Aurora, below the content */
+    opacity: 0.7;
+}
+
+/* Page Section Styling */
+.page {
+    position: relative; 
+    z-index: 2;
+}
+
+/* Navigation */
+.nav-link.active {
+    color: var(--theme-pink);
+    border-bottom: 2px solid var(--theme-pink);
+}
+
+.nav-link {
+    transition: all 0.2s ease-in-out;
+    border-bottom: 2px solid transparent;
+}
+
+.nav-link:hover {
+    color: var(--theme-pink-light);
+}
+
+/* Scrollbar */
+::-webkit-scrollbar { width: 8px; }
+::-webkit-scrollbar-track { background: #0a0a0a; }
+::-webkit-scrollbar-thumb {
+    background: var(--theme-gray-light);
+    border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover { background: var(--theme-pink); }
+
+/* Timeline Styling */
+.timeline-container::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    width: 2px;
+    background-color: var(--theme-gray-light);
+    left: 1rem;
+    z-index: 1;
+}
+
+@media (min-width: 768px) {
+    .timeline-container::before { left: 1.5rem; }
+}
+
+.timeline-dot {
+    content: '';
+    position: absolute;
+    top: 0.5rem;
+    width: 1rem;
+    height: 1rem;
+    background-color: var(--theme-pink);
+    border: 2px solid #0a0a0a;
+    border-radius: 50%;
+    left: 1rem;
+    transform: translateX(-50%);
+    z-index: 10;
+}
+
+@media (min-width: 768px) {
+    .timeline-dot { left: 1.5rem; }
+}
+
+.timeline-container::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 1rem;
+    transform: translateX(-50%);
+    width: 4px;
+    height: 70px;
+    background: linear-gradient(to top, #0a0a0a, rgba(10, 10, 10, 0)); 
+    z-index: 2;
+}
+
+@media (min-width: 768px) {
+    .timeline-container::after {
+        left: 1.5rem;
+        margin-left: -2px;
+    }
+}
+
+/* Glassmorphism Card styles */
+.award-card, .skill-card, .timeline-card {
+    background-color: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+}
+
+.award-card:hover, .skill-card:hover, .timeline-card:hover {
+    background-color: rgba(255, 255, 255, 0.07);
+    border-color: var(--theme-pink);
+    transform: translateY(-5px) scale(1.02);
+    box-shadow: 0 10px 30px rgba(244, 114, 182, 0.2);
+}
+
+/* Pink Glow Effects & Header */
+.text-pink-400 { color: var(--theme-pink); }
+
+.section-header span {
+    color: var(--theme-pink);
+    text-shadow: 0 0 8px var(--theme-pink);
+}
+
+.bg-pink-500 {
+    background-color: var(--theme-pink-dark);
+    box-shadow: 0 0 10px rgba(236, 72, 153, 0.5);
+    transition: all 0.3s ease;
+}
+
+.bg-pink-500:hover {
+    box-shadow: 0 0 20px rgba(236, 72, 153, 0.8);
+    transform: translateY(-2px);
+}
+
+/* Animation Classes */
+.fade-in-section, .flip-in-card {
+    opacity: 0;
+    transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+}
+
+.fade-in-section { transform: translateY(30px); }
+
+.flip-in-card {
+    transform: perspective(1000px) rotateY(90deg); 
+    transform-origin: left;
+}
+
+.fade-in-section.is-visible {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.flip-in-card.is-visible {
+    opacity: 1;
+    transform: perspective(1000px) rotateY(0deg);
+}
