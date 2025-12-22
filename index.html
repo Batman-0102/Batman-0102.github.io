@@ -1,838 +1,1184 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ahmad Abrar - Portfolio</title>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Ahmad Abrar</title>
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Inter Font -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;700;900&display=swap" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;700;900&display=swap"
+      rel="stylesheet"
+    />
 
-    <style>
-        html {
-            scroll-behavior: smooth;
-            scroll-padding-top: 70px; 
-        }
-
-        /* Custom Styles */
-        body {
-            font-family: 'Inter', sans-serif;
-            background-color: #0a0a0a; /* Near-black */
-            color: #f0f0f0; /* Off-white text */
-            overflow-x: hidden;
-        }
-
-        /* Custom Pink Color Variables */
-        :root {
-            --theme-pink: #f472b6; /* Tailwind's pink-400 */
-            --theme-pink-dark: #ec4899; /* Tailwind's pink-500 */
-            --theme-pink-light: #fbcfe8; /* Tailwind's pink-200 */
-            --theme-gray-light: #4b5563; /* Tailwind's gray-600 */
-        }
-
-        /* Animated Aurora Background (Subtle Glow) */
-        #aurora-bg {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100vw;
-            height: 100vh;
-            z-index: -2; /* Behind the canvas and content */
-            opacity: 0.2;
-            overflow: hidden;
-            pointer-events: none;
-        }
-        .aurora-shape {
-            position: absolute;
-            width: 40vw;
-            height: 40vw;
-            min-width: 300px;
-            min-height: 300px;
-            background: radial-gradient(circle, var(--theme-pink) 0%, transparent 70%);
-            filter: blur(100px);
-            border-radius: 50%;
-            animation: moveAurora 25s linear infinite alternate;
-        }
-        .aurora-shape-2 {
-            top: 50vh;
-            left: 50vw;
-            background: radial-gradient(circle, var(--theme-pink-dark) 0%, transparent 70%);
-            animation: moveAurora 35s linear infinite alternate-reverse;
-            animation-delay: -5s;
-        }
-        @keyframes moveAurora {
-            0% { transform: translate(-20vw, -20vh) scale(0.8); }
-            100% { transform: translate(20vw, 20vh) scale(1.2); }
-        }
-
-        /* 3D Canvas Positioning */
-        #pagoda-canvas {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100vw;
-            height: 100vh;
-            z-index: 0; /* Above the Aurora, below the content */
-            opacity: 0.7;
-        }
-
-        /* Page Section Styling */
-        .page {
-            position: relative; 
-            z-index: 2;
-        }
-
-        /* Navigation */
-        .nav-link.active {
-            color: var(--theme-pink);
-            border-bottom: 2px solid var(--theme-pink);
-        }
-        .nav-link {
-            transition: all 0.2s ease-in-out;
-            border-bottom: 2px solid transparent;
-        }
-        .nav-link:hover {
-            color: var(--theme-pink-light);
-        }
-
-        /* Scrollbar */
-        ::-webkit-scrollbar { width: 8px; }
-        ::-webkit-scrollbar-track { background: #0a0a0a; }
-        ::-webkit-scrollbar-thumb {
-            background: var(--theme-gray-light);
-            border-radius: 4px;
-        }
-        ::-webkit-scrollbar-thumb:hover { background: var(--theme-pink); }
-
-        /* Timeline Styling */
-        .timeline-container::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            bottom: 0;
-            width: 2px;
-            background-color: var(--theme-gray-light);
-            left: 1rem;
-            z-index: 1;
-        }
-        @media (min-width: 768px) {
-            .timeline-container::before { left: 1.5rem; }
-        }
-        .timeline-dot {
-            content: '';
-            position: absolute;
-            top: 0.5rem;
-            width: 1rem;
-            height: 1rem;
-            background-color: var(--theme-pink);
-            border: 2px solid #0a0a0a;
-            border-radius: 50%;
-            left: 1rem;
-            transform: translateX(-50%);
-            z-index: 10;
-        }
-        @media (min-width: 768px) {
-            .timeline-dot { left: 1.5rem; }
-        }
-        .timeline-container::after {
-            content: '';
-            position: absolute;
-            bottom: 0;
-            left: 1rem;
-            transform: translateX(-50%);
-            width: 4px;
-            height: 70px;
-            background: linear-gradient(to top, #0a0a0a, rgba(10, 10, 10, 0)); 
-            z-index: 2;
-        }
-        @media (min-width: 768px) {
-            .timeline-container::after {
-                left: 1.5rem;
-                margin-left: -2px;
-            }
-        }
-
-        /* Glassmorphism Card styles */
-        .award-card, .skill-card, .timeline-card {
-            background-color: rgba(255, 255, 255, 0.05);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            backdrop-filter: blur(16px);
-            -webkit-backdrop-filter: blur(16px);
-            transition: all 0.3s ease;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
-        }
-        .award-card:hover, .skill-card:hover, .timeline-card:hover {
-            background-color: rgba(255, 255, 255, 0.07);
-            border-color: var(--theme-pink);
-            transform: translateY(-5px) scale(1.02);
-            box-shadow: 0 10px 30px rgba(244, 114, 182, 0.2);
-        }
-
-        /* Pink Glow Effects & Header */
-        .text-pink-400 { color: var(--theme-pink); }
-        .section-header span {
-            color: var(--theme-pink);
-            text-shadow: 0 0 8px var(--theme-pink);
-        }
-        .bg-pink-500 {
-            background-color: var(--theme-pink-dark);
-            box-shadow: 0 0 10px rgba(236, 72, 153, 0.5);
-            transition: all 0.3s ease;
-        }
-        .bg-pink-500:hover {
-            box-shadow: 0 0 20px rgba(236, 72, 153, 0.8);
-            transform: translateY(-2px);
-        }
-        
-        /* Animation Classes */
-        .fade-in-section, .flip-in-card {
-            opacity: 0;
-            transition: opacity 0.6s ease-out, transform 0.6s ease-out;
-        }
-        .fade-in-section { transform: translateY(30px); }
-        .flip-in-card {
-            transform: perspective(1000px) rotateY(90deg); 
-            transform-origin: left;
-        }
-        .fade-in-section.is-visible {
-            opacity: 1;
-            transform: translateY(0);
-        }
-        .flip-in-card.is-visible {
-            opacity: 1;
-            transform: perspective(1000px) rotateY(0deg);
-        }
-
-    </style>
-</head>
-<body class="bg-[#0a0a0a]">
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body class="bg-[#0a0a0a]">
+    <!-- SVG Icon Definitions (Simplified for HTML/Tailwind) -->
+    <svg style="display: none">
+      <symbol
+        id="icon-code"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+      >
+        <polyline points="16 18 22 12 16 6"></polyline>
+        <polyline points="8 6 2 12 8 18"></polyline>
+      </symbol>
+      <symbol
+        id="icon-shield"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+      >
+        <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+      </symbol>
+      <symbol
+        id="icon-brain"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+      >
+        <path
+          d="M12 5c3.2-1.3 5.4-2.8 5.4-3.5S15 3 12 4s-5.4 1.5-5.4 2.2S9 3 12 2z"
+        ></path>
+        <path
+          d="M12 5c-3.2 1.3-5.4 2.8-5.4 3.5S9 11 12 10s5.4-1.5 5.4-2.2S15 9 12 8z"
+        ></path>
+        <path
+          d="M12 11c-3.2-1.3-5.4-2.8-5.4-3.5S9 5 12 6s5.4 1.5 5.4 2.2S15 9 12 10z"
+        ></path>
+        <path
+          d="M12 14c-3.2-1.3-5.4-2.8-5.4-3.5S9 7 12 8s5.4 1.5 5.4 2.2S15 13 12 12z"
+        ></path>
+        <path
+          d="M12 17c-3.2-1.3-5.4-2.8-5.4-3.5S9 10 12 11s5.4 1.5 5.4 2.2S15 16 12 15z"
+        ></path>
+        <path
+          d="M12 20c-3.2-1.3-5.4-2.8-5.4-3.5S9 13 12 14s5.4 1.5 5.4 2.2S15 19 12 18z"
+        ></path>
+      </symbol>
+      <symbol
+        id="icon-trophy"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+      >
+        <path d="M19 9h-4V4H9v5H5l7 7 7-7z"></path>
+        <path d="M5 21h14"></path>
+      </symbol>
+      <symbol
+        id="icon-computer"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+      >
+        <rect x="2" y="3" width="20" height="15" rx="2" ry="2"></rect>
+        <line x1="8" y1="21" x2="16" y2="21"></line>
+        <line x1="12" y1="18" x2="12" y2="21"></line>
+      </symbol>
+    </svg>
 
     <!-- Aurora Background -->
     <div id="aurora-bg">
-        <div class="aurora-shape" style="top: 10%; left: 10%;"></div>
-        <div class="aurora-shape aurora-shape-2" style="bottom: 5%; right: 10%;"></div>
+      <div class="aurora-shape" style="top: 10%; left: 10%"></div>
+      <div
+        class="aurora-shape aurora-shape-2"
+        style="bottom: 5%; right: 10%"
+      ></div>
     </div>
 
     <!-- Preloader -->
-    <div id="preloader" class="fixed top-0 left-0 w-screen h-screen bg-[#0a0a0a] z-[9999] flex justify-center items-center transition-opacity duration-500 ease-out">
-        <div class="w-12 h-12 border-4 border-gray-800 border-t-pink-400 rounded-full animate-spin"></div>
+    <div
+      id="preloader"
+      class="fixed top-0 left-0 w-screen h-screen bg-[#0a0a0a] z-[9999] flex justify-center items-center transition-opacity duration-500 ease-out"
+    >
+      <div
+        class="w-12 h-12 border-4 border-gray-800 border-t-pink-400 rounded-full animate-spin"
+      ></div>
     </div>
 
     <!-- Header & Navigation -->
-    <header class="fixed top-0 left-0 right-0 z-50 bg-black/50 backdrop-blur-md border-b border-white/10">
-        <nav class="container mx-auto px-6 py-4 flex justify-between items-center">
-            <!-- Logo/Name -->
-            <a href="#home" class="text-2xl font-bold text-white nav-link-header">
-                Ahmad<span class="text-pink-400">.</span>Abrar
-            </a>
-            
-            <!-- Mobile Menu Button -->
-            <div class="md:hidden">
-                <button id="mobile-menu-btn" class="text-white focus:outline-none">
-                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path></svg>
-                </button>
-            </div>
+    <header
+      class="fixed top-0 left-0 right-0 z-50 bg-black/50 backdrop-blur-md border-b border-white/10"
+    >
+      <nav
+        class="container mx-auto px-6 py-4 flex justify-between items-center"
+      >
+        <!-- Logo/Name -->
+        <a href="#home" class="text-2xl font-bold text-white nav-link-header">
+          Ahmad<span class="text-pink-400">.</span>Abrar
+        </a>
 
-            <!-- Desktop Navigation -->
-            <div class="hidden md:flex space-x-6 items-center">
-                <a href="#home" class="nav-link text-gray-200 hover:text-pink-400 active">Home</a>
-                <a href="#about" class="nav-link text-gray-200 hover:text-pink-400">About</a>
-                <a href="#experience" class="nav-link text-gray-200 hover:text-pink-400">Experience</a>
-                <a href="#awards" class="nav-link text-gray-200 hover:text-pink-400">Awards</a>
-                <a href="#contact" class="bg-pink-500 text-black px-4 py-2 rounded-md font-medium transition-all">
-                    Contact
-                </a>
-            </div>
-        </nav>
-        
-        <!-- Mobile Menu -->
-        <div id="mobile-menu" class="hidden md:hidden bg-black/80 backdrop-blur-md">
-            <a href="#home" class="nav-link block px-6 py-3 text-gray-200 hover:text-pink-400 active">Home</a>
-            <a href="#about" class="nav-link block px-6 py-3 text-gray-200 hover:text-pink-400">About</a>
-            <a href="#experience" class="nav-link block px-6 py-3 text-gray-200 hover:text-pink-400">Experience</a>
-            <a href="#awards" class="nav-link block px-6 py-3 text-gray-200 hover:text-pink-400">Awards</a>
-            <a href="#contact" class="block px-6 py-3 text-gray-200">
-                <span class="bg-pink-500 text-black px-4 py-2 rounded-md font-medium transition-all">
-                    Contact
-                </span>
-            </a>
+        <!-- Mobile Menu Button -->
+        <div class="md:hidden">
+          <button id="mobile-menu-btn" class="text-white focus:outline-none">
+            <svg
+              class="w-6 h-6"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+              xmlns="https://www.w3.org/2000/svg"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M4 6h16M4 12h16m-7 6h7"
+              ></path>
+            </svg>
+          </button>
         </div>
+
+        <!-- Desktop Navigation -->
+        <div class="hidden md:flex space-x-6 items-center">
+          <a
+            href="#home"
+            class="nav-link text-gray-200 hover:text-pink-400 active"
+            >Home</a
+          >
+          <a href="#about" class="nav-link text-gray-200 hover:text-pink-400"
+            >About & Skills</a
+          >
+          <a href="#projects" class="nav-link text-gray-200 hover:text-pink-400"
+            >Projects</a
+          >
+          <a href="#awards" class="nav-link text-gray-200 hover:text-pink-400"
+            >Awards</a
+          >
+          <a
+            href="#contact"
+            class="bg-pink-500 text-black px-4 py-2 rounded-md font-medium transition-all"
+          >
+            Let's Collaborate
+          </a>
+        </div>
+      </nav>
+
+      <!-- Mobile Menu -->
+      <div
+        id="mobile-menu"
+        class="hidden md:hidden bg-black/80 backdrop-blur-md"
+      >
+        <a
+          href="#home"
+          class="nav-link block px-6 py-3 text-gray-200 hover:text-pink-400 active"
+          >Home</a
+        >
+        <a
+          href="#about"
+          class="nav-link block px-6 py-3 text-gray-200 hover:text-pink-400"
+          >About & Skills</a
+        >
+        <a
+          href="#projects"
+          class="nav-link block px-6 py-3 text-gray-200 hover:text-pink-400"
+          >Projects</a
+        >
+        <a
+          href="#awards"
+          class="nav-link block px-6 py-3 text-gray-200 hover:text-pink-400"
+          >Awards</a
+        >
+        <a href="#contact" class="block px-6 py-3 text-gray-200">
+          <span
+            class="bg-pink-500 text-black px-4 py-2 rounded-md font-medium transition-all"
+          >
+            Let's Collaborate
+          </span>
+        </a>
+      </div>
     </header>
 
     <!-- Main Content -->
     <main class="pt-16">
+      <!-- ===== 1. HERO (3D Section) ===== -->
+      <section
+        id="home"
+        class="page relative h-screen flex items-center justify-center text-center overflow-hidden"
+      >
+        <!-- 3D Canvas Container -->
+        <div id="pagoda-canvas"></div>
 
-        <!-- ===== HOME (3D Section) ===== -->
-        <section id="home" class="page relative h-screen flex items-center justify-center text-center overflow-hidden">
-            <!-- 3D Canvas Container -->
-            <div id="pagoda-canvas"></div>
-            
-            <!-- Home Content -->
-            <div class="z-10 relative max-w-3xl mx-auto px-4">
-                <h1 class="text-5xl md:text-7xl font-black text-white mb-4 leading-tight">
-                    Hello, I'm <span class="text-pink-400">Ahmad Abrar</span>
-                </h1>
-                <p class="text-xl md:text-2xl text-gray-200 font-light">
-                    High School Student, Web Developer, and Cybersecurity Enthusiast
-                </p>
-                <div class="mt-8 space-x-4">
-                    <a href="#experience" class="bg-pink-500 text-black px-6 py-3 rounded-md font-semibold text-lg transition-all">
-                        View My Work
-                    </a>
-                    <a href="#contact" class="border-2 border-pink-400 text-pink-400 px-6 py-3 rounded-md font-semibold text-lg hover:bg-pink-400 hover:text-black transition-all">
-                        Get In Touch
-                    </a>
-                </div>
+        <!-- Home Content -->
+        <div class="z-10 relative max-w-4xl mx-auto px-4">
+          <p class="text-xl md:text-2xl text-pink-400 font-medium mb-3">
+            Hi, I'm
+          </p>
+          <h1
+            class="text-4xl md:text-6xl lg:text-7xl font-black text-white mb-6 leading-snug"
+          >
+            <span class="block">Ahmad Abrar</span>
+          </h1>
+          <p
+            class="text-lg md:text-xl text-gray-300 font-light max-w-2xl mx-auto"
+          >
+            Building tools that matter, from MedTech hacks to full-stack web
+            solutions.
+          </p>
+          <div class="mt-10 space-x-4">
+            <a
+              href="#projects"
+              class="bg-pink-500 text-black px-6 py-3 rounded-md font-semibold text-lg transition-all"
+            >
+              Explore My Projects
+            </a>
+            <a
+              href="#contact"
+              class="border-2 border-pink-400 text-pink-400 px-6 py-3 rounded-md font-semibold text-lg hover:bg-pink-400 hover:text-black transition-all"
+            >
+              Let's Collaborate
+            </a>
+          </div>
+        </div>
+      </section>
+
+      <!-- ===== 2. ABOUT ME & SKILLS ===== -->
+      <section id="about" class="page py-20 md:py-32 fade-in-section">
+        <div class="container mx-auto px-6 max-w-6xl">
+          <h2 class="text-4xl font-bold text-center text-white mb-4">
+            About <span>Me</span> & Skills
+          </h2>
+          <p class="text-lg text-gray-300 text-center max-w-3xl mx-auto mb-16">
+            Who I am, what drives me, and the tools I use to build solutions.
+          </p>
+
+          <!-- Bio with Personality -->
+          <div class="grid grid-cols-1 lg:grid-cols-3 gap-12 mb-20">
+            <div class="lg:col-span-1 text-center lg:text-left">
+              <img
+                src="https://placehold.co/180x180/f472b6/0a0a0a?text=AA"
+                alt="Ahmad Abrar"
+                class="w-40 h-40 rounded-full mx-auto lg:mx-0 mb-6 border-4 border-pink-400"
+              />
+              <h3 class="text-3xl font-bold text-white mb-2">About me</h3>
             </div>
-        </section>
-
-        <!-- ===== ABOUT ME ===== -->
-        <section id="about" class="page py-20 md:py-32 fade-in-section">
-            <div class="container mx-auto px-6 max-w-4xl">
-                <h2 class="text-4xl font-bold text-center text-white mb-4">About <span>Me</span></h2>
-                <p class="text-lg text-gray-300 text-center max-w-3xl mx-auto mb-16">
-                    A brief introduction to who I am and what I do.
-                </p>
-
-                <!-- Bio -->
-                <div class="text-center mb-16">
-                    <img src="https://placehold.co/150x150/f472b6/0a0a0a?text=AA" alt="Ahmad Abrar" class="w-32 h-32 rounded-full mx-auto mb-6 border-4 border-pink-400">
-                    <h3 class="text-3xl font-bold text-white mb-4">Who I Am</h3>
-                    <p class="text-gray-300 text-lg mb-6 leading-relaxed">
-                        I am a highly motivated high school student at Old Scona Academic, currently enrolled in Math, French, and Computer Science IB courses. With a passion for technology and leadership, I thrive in challenging environments, from cybersecurity competitions to web development projects.
-                    </p>
-                    <p class="text-gray-300 text-lg leading-relaxed">
-                        My goal is to leverage my skills in software development, cybersecurity, and critical thinking to create innovative solutions and make a meaningful impact.
-                    </p>
-                </div>
-
-                <!-- Skills Section -->
-                <div class="mt-20">
-                    <h3 class="text-3xl font-bold text-white text-center mb-10">My <span>Skills</span></h3>
-                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                        <!-- Digital Skills -->
-                        <div class="skill-card p-6 rounded-lg flip-in-card">
-                            <h4 class="text-xl font-semibold text-pink-400 mb-3">Digital Skills</h4>
-                            <ul class="list-disc list-inside text-gray-200 space-y-2">
-                                <li>Web Development</li>
-                                <li>App Development</li>
-                                <li>Database Management</li>
-                                <li>Cybersecurity & Network Management</li>
-                            </ul>
-                        </div>
-                        
-                        <!-- Core Expertise -->
-                        <div class="skill-card p-6 rounded-lg flip-in-card" style="transition-delay: 0.1s;">
-                            <h4 class="text-xl font-semibold text-pink-400 mb-3">Core Expertise</h4>
-                            <ul class="list-disc list-inside text-gray-200 space-y-2">
-                                <li>Critical Thinking</li>
-                                <li>Communication</li>
-                                <li>Teamwork & Leadership</li>
-                                <li>Time Management & Multitasking</li>
-                            </ul>
-                        </div>
-
-                        <!-- Languages -->
-                        <div class="skill-card p-6 rounded-lg flip-in-card" style="transition-delay: 0.2s;">
-                            <h4 class="text-xl font-semibold text-pink-400 mb-3">Languages</h4>
-                            <ul class="list-disc list-inside text-gray-200 space-y-2">
-                                <li>English (Fluent)</li>
-                                <li>Urdu (Fluent)</li>
-                                <li>Hindi (Fluent)</li>
-                                <li>French (IB Level)</li>
-                            </ul>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Key Involvements -->
-                <div class="mt-20">
-                    <h3 class="text-3xl font-bold text-white text-center mb-10">Activities & <span>Leadership</span></h3>
-                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                        <div class="skill-card p-6 rounded-lg fade-in-section">
-                            <h4 class="text-xl font-semibold text-pink-400 mb-3">CyberPatriot / PicoCTF</h4>
-                            <p class="text-gray-300">Actively compete in global cybersecurity competitions, achieving top-tier rankings.</p>
-                        </div>
-                        <div class="skill-card p-6 rounded-lg fade-in-section" style="transition-delay: 0.1s;">
-                            <h4 class="text-xl font-semibold text-pink-400 mb-3">Model UN (HSMUN)</h4>
-                            <p class="text-gray-300">Represented countries in high-level debates, researching policies and negotiating resolutions.</p>
-                        </div>
-                        <div class="skill-card p-6 rounded-lg fade-in-section" style="transition-delay: 0.2s;">
-                            <h4 class="text-xl font-semibold text-pink-400 mb-3">Muslim Student Association</h4>
-                            <p class="text-gray-300">Support and organize events to enhance student engagement and cultural dialogue.</p>
-                        </div>
-                    </div>
-                </div>
+            <div
+              class="lg:col-span-2 text-gray-300 text-lg leading-relaxed card p-6 rounded-lg"
+            >
+              <p class="mb-4">
+                Hi, I’m Ahmad. I’m a high school student at Old Scona Academic
+                with a strong interest in computer science and cybersecurity. I
+                spend most of my time building projects, competing in hackathons
+                and CTFs, and figuring out how systems work and how they break.
+              </p>
+              <p class="mb-4">
+                Outside of tech, I like staying active, messing around with side
+                projects, and learning whatever catches my curiosity next.
+                Thanks for taking a look at my projects.
+              </p>
+              <p class="font-semibold text-pink-200">
+                I build ideas into reality.
+              </p>
             </div>
-        </section>
+          </div>
 
-        <!-- ===== EXPERIENCE (Timeline) ===== -->
-        <section id="experience" class="page py-20 md:py-32">
-            <div class="container mx-auto px-6 max-w-3xl">
-                <h2 class="text-4xl font-bold text-center text-white mb-4 fade-in-section">My <span>Experience</span></h2>
-                <p class="text-lg text-gray-300 text-center max-w-3xl mx-auto mb-16 fade-in-section">
-                    A timeline of my professional, project, and volunteer work.
-                </p>
-
-                <!-- Timeline Container (SINGLE-SIDED) -->
-                <div class="timeline-container relative max-w-4xl mx-auto">
-                    
-                    <!-- Timeline Item 1 -->
-                    <div class="timeline-item mb-12 pl-8 md:pl-12">
-                        <div class="timeline-dot"></div>
-                        <div class="timeline-card p-6 rounded-lg shadow-lg flip-in-card">
-                            <p class="text-pink-400 font-semibold">Feb 2025 - Present</p>
-                            <h3 class="text-2xl font-bold text-white mt-1">Volunteer</h3>
-                            <p class="text-lg text-gray-300 font-medium">Pakistan Canada Association of Edmonton</p>
-                            <p class="text-gray-400 mt-3">
-                                Coordinated large-scale events for 300+ attendees; implemented hands-on logistics, technical setups, and operations.
-                            </p>
-                        </div>
-                    </div>
-                    
-                    <!-- Timeline Item 2 -->
-                    <div class="timeline-item mb-12 pl-8 md:pl-12">
-                        <div class="timeline-dot"></div>
-                        <div class="timeline-card p-6 rounded-lg shadow-lg flip-in-card" style="transition-delay: 0.1s;">
-                            <p class="text-pink-400 font-semibold">Sep 2024 - Present</p>
-                            <h3 class="text-2xl font-bold text-white mt-1">Tutor</h3>
-                            <p class="text-lg text-gray-300 font-medium">Life Long Learners (Non-Profit)</p>
-                            <p class="text-gray-400 mt-3">
-                                Tutored middle school students in Math, Science, and French (130+ hours). Awarded Most Hours Committed and Most Sessions Led.
-                            </p>
-                        </div>
-                    </div>
-
-                    <!-- Timeline Item 3 -->
-                    <div class="timeline-item mb-12 pl-8 md:pl-12">
-                        <div class="timeline-dot"></div>
-                        <div class="timeline-card p-6 rounded-lg shadow-lg flip-in-card" style="transition-delay: 0.2s;">
-                            <p class="text-pink-400 font-semibold">Jan 2024 - Aug 2024</p>
-                            <h3 class="text-2xl font-bold text-white mt-1">Lead Web Developer & Project Director</h3>
-                            <p class="text-lg text-gray-300 font-medium">Project YUZU</p>
-                            <p class="text-gray-400 mt-3">
-                                Led client projects and design of user experience strategies. Developed intuitive UIs that boosted engagement by 200%.
-                            </p>
-                        </div>
-                    </div>
-
+          <!-- Skills Section with Icons & Hierarchy -->
+          <div class="mt-10">
+            <h3 class="text-3xl font-bold text-white text-center mb-10">
+              Key <span>Expertise</span>
+            </h3>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+              <!-- Block 1: Technical Skills -->
+              <div class="card p-8 rounded-lg flip-in-card">
+                <div class="flex items-center space-x-3 mb-4">
+                  <svg class="w-8 h-8 text-pink-400">
+                    <use xlink:href="#icon-computer"></use>
+                  </svg>
+                  <h4 class="text-2xl font-semibold text-white">
+                    Technical Proficiency
+                  </h4>
                 </div>
-            </div>
-        </section>
+                <ul class="list-none space-y-5 text-gray-300">
+                  <li>
+                    <strong class="text-pink-400"
+                      >Full-Stack Development:</strong
+                    >
+                    Build robust applications with HTML, CSS (Tailwind),
+                    JavaScript, Python (Flask/Django), and Firebase/SQL
+                    integration.
+                  </li>
+                  <li>
+                    <strong class="text-pink-400"
+                      >Cybersecurity & Networking:</strong
+                    >
+                    OS hardening, network analysis, vulnerability assessment;
+                    top 0.5% globally in CyberPatriot XVII.
+                  </li>
+                  <li>
+                    <strong class="text-pink-400">Applied Computing:</strong>
+                    Projects in Computer Vision (OpenCV), data manipulation, and
+                    software engineering principles.
+                  </li>
+                </ul>
+              </div>
 
-        <!-- ===== AWARDS ===== -->
-        <section id="awards" class="page py-20 md:py-32 fade-in-section">
-            <div class="container mx-auto px-6 max-w-6xl">
-                <h2 class="text-4xl font-bold text-center text-white mb-4">Honors & <span>Awards</span></h2>
-                <p class="text-lg text-gray-300 text-center max-w-3xl mx-auto mb-16">
-                    A collection of my achievements in cybersecurity, computing, and leadership.
-                </p>
-
-                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                    
-                    <div class="award-card p-6 rounded-lg flip-in-card">
-                        <h3 class="text-xl font-bold text-pink-400">1st Place, Standard Division</h3>
-                        <p class="text-gray-200 text-lg">NatHacks 2025 (MedTech)</p>
-                        <p class="text-gray-400 mt-2">Competed in an undivided field alongside graduate and PhD-level teams.</p>
-                    </div>
-                    
-                    <div class="award-card p-6 rounded-lg flip-in-card" style="transition-delay: 0.1s;">
-                        <h3 class="text-xl font-bold text-pink-400">1st Place, Internationally</h3>
-                        <p class="text-gray-200 text-lg">Maple Defender Cyber Challenge</p>
-                        <p class="text-gray-400 mt-2">Team Captain; received commendations from Govt. of Alberta, MLA, and CO.</p>
-                    </div>
-
-                    <div class="award-card p-6 rounded-lg flip-in-card" style="transition-delay: 0.2s;">
-                        <h3 class="text-xl font-bold text-pink-400">3rd Place, Nationally</h3>
-                        <p class="text-gray-200 text-lg">CyberTitan Nationals XIII</p>
-                        <p class="text-gray-400 mt-2">Significant improvement from 11th place finish in CyberTitan XII.</p>
-                    </div>
-                    
-                    <div class="award-card p-6 rounded-lg flip-in-card" style="transition-delay: 0.3s;">
-                        <h3 class="text-xl font-bold text-pink-400">Top 0.5% Globally</h3>
-                        <p class="text-gray-200 text-lg">CyberPatriot XVII (25 / 5050 teams)</p>
-                        <p class="text-gray-400 mt-2">Also achieved Top 1.24% in CyberPatriot XVI (64 / 5183 teams).</p>
-                    </div>
-
-                    <div class="award-card p-6 rounded-lg flip-in-card" style="transition-delay: 0.4s;">
-                        <h3 class="text-xl font-bold text-pink-400">Top 0.36% Globally</h3>
-                        <p class="text-gray-200 text-lg">PicoCTF (41 / 11517 teams)</p>
-                        <p class="text-gray-400 mt-2">Demonstrated strong skills in a massive global competition.</p>
-                    </div>
-
-                    <div class="award-card p-6 rounded-lg flip-in-card" style="transition-delay: 0.5s;">
-                        <h3 class="text-xl font-bold text-pink-400">High Score (71 / 75)</h3>
-                        <p class="text-gray-200 text-lg">Canadian Computing Competition (Junior)</p>
-                        <p class="text-gray-400 mt-2">Placed in the top tier of competitors.</p>
-                    </div>
-
+              <!-- Block 2: Core Competencies -->
+              <div
+                class="card p-8 rounded-lg flip-in-card"
+                style="transition-delay: 0.1s"
+              >
+                <div class="flex items-center space-x-3 mb-4">
+                  <svg class="w-8 h-8 text-pink-400">
+                    <use xlink:href="#icon-brain"></use>
+                  </svg>
+                  <h4 class="text-2xl font-semibold text-white">
+                    Core Competencies
+                  </h4>
                 </div>
+                <ul class="list-none space-y-5 text-gray-300">
+                  <li>
+                    <strong class="text-pink-400">Critical Thinking:</strong>
+                    Proven in CTF competitions and complex technical projects.
+                  </li>
+                  <li>
+                    <strong class="text-pink-400"
+                      >Teamwork & Leadership:</strong
+                    >
+                    Led national CTF teams and cadet squads, managing strategy,
+                    delegation, and execution under high-pressure situations.
+                  </li>
+                  <li>
+                    <strong class="text-pink-400"
+                      >Communication & Mentorship:</strong
+                    >
+                    Over 130 hours tutoring middle school students in Math and
+                    Science, mentoring cadets, and breaking down complex
+                    concepts into actionable steps.
+                  </li>
+                </ul>
+              </div>
             </div>
-        </section>
+          </div>
+        </div>
+      </section>
 
-        <!-- ===== CONTACT ===== -->
-        <section id="contact" class="page py-20 md:py-32 fade-in-section">
-            <div class="container mx-auto px-6 max-w-3xl">
-                <h2 class="text-4xl font-bold text-center text-white mb-4">Get In <span>Touch</span></h2>
-                <p class="text-lg text-gray-300 text-center max-w-3xl mx-auto mb-16">
-                    I'm always open to discussing new projects, creative ideas, or opportunities.
-                </p>
+      <!-- ===== 3. PROJECTS ===== -->
+      <section id="projects" class="page py-20 md:py-32">
+        <div class="container mx-auto px-6 max-w-6xl">
+          <h2
+            class="text-4xl font-bold text-center text-white mb-4 fade-in-section"
+          >
+            <span>Projects</span>
+          </h2>
+          <p
+            class="text-lg text-gray-300 text-center max-w-3xl mx-auto mb-16 fade-in-section"
+          >
+            Showcasing technical depth and real-world application through recent
+            builds.
+          </p>
 
-                <!-- Contact Form (Mailto) -->
-                <form 
-                    action="mailto:ahmad.abrar2385@gmail.com" 
-                    method="POST" 
-                    enctype="text/plain"
-                    class="space-y-6"
+          <!-- Project Grid -->
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+            <!-- Project 1: Insulink (Mock MedTech Hack) -->
+            <div class="card p-6 rounded-lg fade-in-section">
+              <img
+                src="/Assets/Insulink_Banner.png"
+                alt="Insulink Project Screenshot"
+                class="rounded-lg mb-4 object-cover"
+              />
+              <h3 class="text-2xl font-bold text-pink-400 mb-2">Insulink</h3>
+              <p class="text-gray-400 mb-4">
+                A winning hackathon project (1st Place, NatHacks 2025) utilizing
+                a full-stack approach to help diabetic individuals and their
+                care-teams monitor and manage insulin data more effectively by
+                linking device output, app inputs, and alerts in one unified
+                interface.
+              </p>
+              <ul class="list-none text-gray-300 text-sm mb-4 space-y-1">
+                <li>
+                  <strong>Tech Stack:</strong> TypeScript, React, built with
+                  Vite,Tailwind CSS, shadcn-ui,Python, Node.js.
+                </li>
+              </ul>
+              <div class="flex space-x-4">
+                <a
+                  href="projects/Insulink/index.html"
+                  class="text-sm font-medium text-black bg-pink-400 px-3 py-1 rounded hover:bg-white transition"
+                  >See Live Demo (Mock)</a
                 >
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <!-- Name -->
-                        <div>
-                            <label for="name" class="block text-sm font-medium text-gray-300 mb-2">Your Name</label>
-                            <input 
-                                type="text" 
-                                id="name" 
-                                name="name" 
-                                required 
-                                class="w-full bg-gray-900 border border-gray-700 rounded-lg p-3 text-gray-200 focus:outline-none focus:ring-2 focus:ring-pink-400 transition-all"
-                            >
-                        </div>
-                        <!-- Email -->
-                        <div>
-                            <label for="email" class="block text-sm font-medium text-gray-300 mb-2">Your Email</label>
-                            <input 
-                                type="email" 
-                                id="email" 
-                                name="email" 
-                                required 
-                                class="w-full bg-gray-900 border border-gray-700 rounded-lg p-3 text-gray-200 focus:outline-none focus:ring-2 focus:ring-pink-400 transition-all"
-                            >
-                        </div>
-                    </div>
-                    
-                    <!-- Subject -->
-                    <div>
-                        <label for="subject" class="block text-sm font-medium text-gray-300 mb-2">Subject</label>
-                        <input 
-                            type="text" 
-                            id="subject" 
-                            name="subject" 
-                            required 
-                            class="w-full bg-gray-900 border border-gray-700 rounded-lg p-3 text-gray-200 focus:outline-none focus:ring-2 focus:ring-pink-400 transition-all"
-                        >
-                    </div>
-
-                    <!-- Message -->
-                    <div>
-                        <label for="message" class="block text-sm font-medium text-gray-300 mb-2">Your Message</label>
-                        <textarea 
-                            id="message" 
-                            name="message" 
-                            rows="5" 
-                            required 
-                            class="w-full bg-gray-900 border border-gray-700 rounded-lg p-3 text-gray-200 focus:outline-none focus:ring-2 focus:ring-pink-400 transition-all"
-                        ></textarea>
-                    </div>
-
-                    <!-- Submit Button -->
-                    <div class="text-center">
-                        <button 
-                            type="submit" 
-                            class="bg-pink-500 text-black px-8 py-3 rounded-md font-semibold text-lg transition-all"
-                        >
-                            Send Message
-                        </button>
-                    </div>
-                </form>
+                <a
+                  href="https://github.com/AydenBravender/InsuLink"
+                  class="text-sm font-medium text-pink-400 border border-pink-400 px-3 py-1 rounded hover:bg-pink-400 hover:text-black transition"
+                  >GitHub</a
+                >
+              </div>
             </div>
-        </section>
 
+            <!-- Project 2: Computer Vision Music Player -->
+            <div
+              class="card p-6 rounded-lg fade-in-section"
+              style="transition-delay: 0.1s"
+            >
+              <img
+                src="https://placehold.co/600x350/1e293b/f472b6?text=Computer+Vision+Player"
+                alt="Computer Vision Music Player Screenshot"
+                class="rounded-lg mb-4 object-cover"
+              />
+              <h3 class="text-2xl font-bold text-pink-400 mb-2">
+                Computer Vision Music Player
+              </h3>
+              <p class="text-gray-400 mb-4">
+                Developed a Python application using OpenCV to control music
+                playback (play/pause, skip) based on hand gestures captured by a
+                webcam. Focus on low-latency processing.
+              </p>
+              <ul class="list-none text-gray-300 text-sm mb-4 space-y-1">
+                <li><strong>Tech Stack:</strong> Python, OpenCV, MediaPipe</li>
+              </ul>
+              <div class="flex space-x-4">
+                <a
+                  href="projects/CV/index.html"
+                  class="text-sm font-medium text-black bg-pink-400 px-3 py-1 rounded hover:bg-white transition"
+                  >See Live Demo (Mock)</a
+                >
+                <a
+                  href="https://github.com/Akari-08/Hand-Controlled-Music-Player"
+                  class="text-sm font-medium text-pink-400 border border-pink-400 px-3 py-1 rounded hover:bg-pink-400 hover:text-black transition"
+                  >GitHub</a
+                >
+              </div>
+            </div>
+
+            <!-- Project 3: NeuroDive (Neural Network Learning) -->
+            <div class="card p-6 rounded-lg fade-in-section">
+              <img
+                src="https://placehold.co/600x350/1e293b/f472b6?text=NeuroDive"
+                alt="NeuroDive Screenshot"
+                class="rounded-lg mb-4 object-cover"
+              />
+              <h3 class="text-2xl font-bold text-pink-400 mb-2">NeuroDive</h3>
+              <p class="text-gray-400 mb-4">
+                An interactive web tool that teaches users how neural networks
+                work, visually showing how data moves through layers and how the
+                network learns from input. Perfect for beginners and students
+                who want to understand AI concepts step by step.
+              </p>
+              <ul class="list-none text-gray-300 text-sm mb-4 space-y-1">
+                <li><strong>Tech Stack:</strong> In production</li>
+              </ul>
+              <div class="flex space-x-4">
+                <a
+                  href="projects/NeuroDive/index.html"
+                  class="text-sm font-medium text-black bg-pink-400 px-3 py-1 rounded hover:bg-white transition"
+                  >See Live Demo (Mock)</a
+                >
+                <a
+                  href="#"
+                  class="text-sm font-medium text-pink-400 border border-pink-400 px-3 py-1 rounded hover:bg-pink-400 hover:text-black transition"
+                  >GitHub</a
+                >
+              </div>
+            </div>
+
+            <!-- Project 4: Android Allowance Tracker -->
+            <div
+              class="card p-6 rounded-lg fade-in-section"
+              style="transition-delay: 0.1s"
+            >
+              <img
+                src="https://placehold.co/600x350/1e293b/f472b6?text=Android+App+Tracker"
+                alt="Android Allowance Tracker Screenshot"
+                class="rounded-lg mb-4 object-cover"
+              />
+              <h3 class="text-2xl font-bold text-pink-400 mb-2">
+                Ripple (Android Allowance Tracker)
+              </h3>
+              <p class="text-gray-400 mb-4">
+                A personal finance management tool for Android, designed for
+                parents and their children to track income, expenses, and set
+                financial goals together, helping families manage money and
+                teach good financial habits.
+              </p>
+              <ul class="list-none text-gray-300 text-sm mb-4 space-y-1">
+                <li><strong>Tech Stack:</strong> Python, Kivy, Firebase</li>
+              </ul>
+              <div class="flex space-x-4">
+                <a
+                  href="projects/Ripple/index.html"
+                  class="text-sm font-medium text-black bg-pink-400 px-3 py-1 rounded hover:bg-white transition"
+                  >See Live Demo (Mock)</a
+                >
+                <a
+                  href="https://github.com/Akari-08/Ripple-Allowance-Tracker"
+                  class="text-sm font-medium text-pink-400 border border-pink-400 px-3 py-1 rounded hover:bg-pink-400 hover:text-black transition"
+                  >GitHub</a
+                >
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ===== 4. VOLUNTEER & LEADERSHIP ===== -->
+      <section id="experience" class="page py-20 md:py-32">
+        <div class="container mx-auto px-6 max-w-3xl">
+          <h2
+            class="text-4xl font-bold text-center text-white mb-4 fade-in-section"
+          >
+            Volunteer & <span>Leadership</span>
+          </h2>
+          <p
+            class="text-lg text-gray-300 text-center max-w-3xl mx-auto mb-16 fade-in-section"
+          >
+            Developing leadership, mentorship, and community engagement skills
+            through volunteering, tutoring, and student initiatives.
+          </p>
+
+          <!-- Timeline Container -->
+          <div class="timeline-container relative max-w-4xl mx-auto">
+            <!-- PCAE Volunteer -->
+            <div class="timeline-item mb-12 pl-8 md:pl-12">
+              <div class="timeline-dot"></div>
+              <div
+                class="card timeline-card p-6 rounded-lg shadow-lg flip-in-card"
+              >
+                <p class="text-pink-400 font-semibold">Feb 2025 - Present</p>
+                <h3 class="text-2xl font-bold text-white mt-1">Volunteer</h3>
+                <p class="text-lg text-gray-300 font-medium">
+                  Pakistan Canada Association of Edmonton (PCAE)
+                </p>
+                <p class="text-gray-400 mt-3">
+                  Assisted Pakistan Association of Edmonton in preliminary event
+                  planning, supporting cultural initiatives, and attending
+                  coordination sessions for community events.
+                </p>
+              </div>
+            </div>
+
+            <!-- Air Cadets -->
+            <div class="timeline-item mb-12 pl-8 md:pl-12">
+              <div class="timeline-dot"></div>
+              <div
+                class="card timeline-card p-6 rounded-lg shadow-lg flip-in-card"
+                style="transition-delay: 0.1s"
+              >
+                <p class="text-pink-400 font-semibold">Sep 2020 - Present</p>
+                <h3 class="text-2xl font-bold text-white mt-1">
+                  Company Warrant Officer
+                </h3>
+                <p class="text-lg text-gray-300 font-medium">
+                  Air Cadets (287 Beaumont Squadron)
+                </p>
+                <p class="text-gray-400 mt-3">
+                  Taught and led <strong>200+ cadets</strong> in leadership,
+                  aviation training, and discipline exercises; dedicated 300+
+                  hours mentoring younger cadets and supporting local projects.
+                </p>
+              </div>
+            </div>
+
+            <!-- Lead Tutor -->
+            <div class="timeline-item mb-12 pl-8 md:pl-12">
+              <div class="timeline-dot"></div>
+              <div
+                class="card timeline-card p-6 rounded-lg shadow-lg flip-in-card"
+                style="transition-delay: 0.2s"
+              >
+                <p class="text-pink-400 font-semibold">Sep 2024 - Present</p>
+                <h3 class="text-2xl font-bold text-white mt-1">
+                  Lead Tutor & Mentor
+                </h3>
+                <p class="text-lg text-gray-300 font-medium">
+                  Life Long Learners (Non-Profit)
+                </p>
+                <p class="text-gray-400 mt-3">
+                  Tutored middle school students in Math, Science, and French
+                  for <strong>130+ hours</strong>; designed personalized lesson
+                  plans, tracked progress, and awarded Most Hours Committed.
+                </p>
+              </div>
+            </div>
+
+            <!-- MUN -->
+            <div class="timeline-item mb-12 pl-8 md:pl-12">
+              <div class="timeline-dot"></div>
+              <div
+                class="card timeline-card p-6 rounded-lg shadow-lg flip-in-card"
+                style="transition-delay: 0.3s"
+              >
+                <p class="text-pink-400 font-semibold">2023/2024</p>
+                <h3 class="text-2xl font-bold text-white mt-1">
+                  Model UN Delegate
+                </h3>
+                <p class="text-lg text-gray-300 font-medium">MUN</p>
+                <p class="text-gray-400 mt-3">
+                  Represented a country in high-level debate, researching
+                  policies, negotiating resolutions, and collaborating with
+                  peers to address complex global issues.
+                </p>
+              </div>
+            </div>
+
+            <!-- MSA -->
+            <div class="timeline-item mb-12 pl-8 md:pl-12">
+              <div class="timeline-dot"></div>
+              <div
+                class="card timeline-card p-6 rounded-lg shadow-lg flip-in-card"
+                style="transition-delay: 0.4s"
+              >
+                <p class="text-pink-400 font-semibold">2023/2024</p>
+                <h3 class="text-2xl font-bold text-white mt-1">
+                  Event Volunteer
+                </h3>
+                <p class="text-lg text-gray-300 font-medium">
+                  Muslim Student Association
+                </p>
+                <p class="text-gray-400 mt-3">
+                  Supported events and outreach initiatives to enhance student
+                  engagement and foster cross-cultural dialogue.
+                </p>
+              </div>
+            </div>
+
+            <!-- Yearbook Club -->
+            <div class="timeline-item mb-12 pl-8 md:pl-12">
+              <div class="timeline-dot"></div>
+              <div
+                class="card timeline-card p-6 rounded-lg shadow-lg flip-in-card"
+                style="transition-delay: 0.5s"
+              >
+                <p class="text-pink-400 font-semibold">2024/2025</p>
+                <h3 class="text-2xl font-bold text-white mt-1">
+                  Yearbook Photographer
+                </h3>
+                <p class="text-lg text-gray-300 font-medium">Yearbook Club</p>
+                <p class="text-gray-400 mt-3">
+                  Captured over 1,000 photos documenting school events,
+                  contributing to a professional-quality annual that preserved
+                  school history for all students.
+                </p>
+              </div>
+            </div>
+
+            <!-- Body & Mind Club -->
+            <div class="timeline-item mb-12 pl-8 md:pl-12">
+              <div class="timeline-dot"></div>
+              <div
+                class="card timeline-card p-6 rounded-lg shadow-lg flip-in-card"
+                style="transition-delay: 0.6s"
+              >
+                <p class="text-pink-400 font-semibold">2025-present</p>
+                <h3 class="text-2xl font-bold text-white mt-1">
+                  Senior Executive
+                </h3>
+                <p class="text-lg text-gray-300 font-medium">
+                  Body & Mind Club
+                </p>
+                <p class="text-gray-400 mt-3">
+                  Managed social media, promotional campaigns, and event
+                  materials for initiatives backed by the Mental Health
+                  Association of Canada and Mental Health Foundation of Alberta.
+                </p>
+              </div>
+            </div>
+
+            <!-- TCF -->
+            <div class="timeline-item mb-12 pl-8 md:pl-12">
+              <div class="timeline-dot"></div>
+              <div
+                class="card timeline-card p-6 rounded-lg shadow-lg flip-in-card"
+                style="transition-delay: 0.7s"
+              >
+                <p class="text-pink-400 font-semibold">July 2025-present</p>
+                <h3 class="text-2xl font-bold text-white mt-1">Volunteer</h3>
+                <p class="text-lg text-gray-300 font-medium">
+                  The Citizens Foundation (TCF)
+                </p>
+                <p class="text-gray-400 mt-3">
+                  Contributed to education initiatives at a nonprofit that
+                  operates 2,033 purpose‑built schools educating over 301,000
+                  children nationwide and has become one of the largest
+                  community‑based education networks in Pakistan.
+                </p>
+              </div>
+            </div>
+
+            <!-- Heritage Festival -->
+            <div class="timeline-item mb-12 pl-8 md:pl-12">
+              <div class="timeline-dot"></div>
+              <div
+                class="card timeline-card p-6 rounded-lg shadow-lg flip-in-card"
+                style="transition-delay: 0.8s"
+              >
+                <p class="text-pink-400 font-semibold">Aug 2025</p>
+                <h3 class="text-2xl font-bold text-white mt-1">Volunteer</h3>
+                <p class="text-lg text-gray-300 font-medium">
+                  Heritage Festival
+                </p>
+                <p class="text-gray-400 mt-3">
+                  Represented Pakistani culture at a
+                  <strong>300,000+ attendee</strong> festival, managing
+                  high-volume food service and ensuring smooth operations for
+                  thousands of visitors.
+                </p>
+              </div>
+            </div>
+
+            <!-- Zindagi Trust -->
+            <div class="timeline-item mb-12 pl-8 md:pl-12">
+              <div class="timeline-dot"></div>
+              <div
+                class="card timeline-card p-6 rounded-lg shadow-lg flip-in-card"
+                style="transition-delay: 0.9s"
+              >
+                <p class="text-pink-400 font-semibold">June 2025-present</p>
+                <h3 class="text-2xl font-bold text-white mt-1">Photographer</h3>
+                <p class="text-lg text-gray-300 font-medium">Zindagi trust</p>
+                <p class="text-gray-400 mt-3">
+                  Photographed a live concert supporting educational reform for
+                  a nonprofit that has transformed government schools serving
+                  3,559+ students and advocates for systemic improvements
+                  impacting thousands more in Pakistan’s public education
+                  system.
+                </p>
+              </div>
+            </div>
+
+            <!-- Add more cards similarly for competitions or other volunteer items if needed -->
+          </div>
+        </div>
+      </section>
+      <!-- ===== 5. AWARDS ===== -->
+      <section id="awards" class="page py-20 md:py-32 fade-in-section">
+        <div class="container mx-auto px-6 max-w-6xl">
+          <h2 class="text-4xl font-bold text-center text-white mb-4">
+            Honors & <span>Rankings</span>
+          </h2>
+          <p class="text-lg text-gray-300 text-center max-w-3xl mx-auto mb-16">
+            A showcase of my competitive, academic, and leadership
+            accomplishments, highlighting top-tier international, national, and
+            provincial recognition.
+          </p>
+
+          <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            <!-- Column 1: Cybersecurity Achievements -->
+            <div class="space-y-6">
+              <h3
+                class="text-2xl font-bold text-pink-400 border-b border-pink-400/50 pb-2 flex items-center"
+              >
+                <svg class="w-6 h-6 mr-2">
+                  <use xlink:href="#icon-shield"></use>
+                </svg>
+                Achievements
+              </h3>
+
+              <div class="card award-card p-4 rounded-lg flip-in-card">
+                <p class="text-xl font-bold text-white flex items-center">
+                  🏆 1st Place, Internationally
+                </p>
+                <p class="text-gray-300 text-sm">
+                  Maple Defender Cyber Challenge
+                </p>
+                <p class="text-gray-400 mt-1">
+                  Team Captain; led high school team to top international
+                  ranking with commendations from the Government of Alberta,
+                  local MLA, and squadron Commanding Officer.
+                </p>
+              </div>
+
+              <div
+                class="card award-card p-4 rounded-lg flip-in-card"
+                style="transition-delay: 0.1s"
+              >
+                <p class="text-xl font-bold text-white flex items-center">
+                  🥇 1st Place, Provincial
+                </p>
+                <p class="text-gray-300 text-sm">CyberAlberta CTF</p>
+                <p class="text-gray-400 mt-1">
+                  Directed team strategy to secure top provincial ranking
+                  against senior competitors.
+                </p>
+              </div>
+
+              <div
+                class="card award-card p-4 rounded-lg flip-in-card"
+                style="transition-delay: 0.2s"
+              >
+                <p class="text-xl font-bold text-white flex items-center">
+                  🥉 3rd Place, Nationally
+                </p>
+                <p class="text-gray-300 text-sm">CyberTitan Nationals XIII</p>
+                <p class="text-gray-400 mt-1">
+                  Demonstrated significant improvement and strategic leadership
+                  in national-level high school competition.
+                </p>
+              </div>
+
+              <div
+                class="card award-card p-4 rounded-lg flip-in-card"
+                style="transition-delay: 0.3s"
+              >
+                <p class="text-xl font-bold text-white flex items-center">
+                  🌎 Top 0.5% Globally
+                </p>
+                <p class="text-gray-300 text-sm">
+                  CyberPatriot XVII (25 / 5050 teams)
+                </p>
+                <p class="text-gray-400 mt-1">
+                  Maintained consistent top-tier international performance,
+                  competing against teams from across the globe.
+                </p>
+              </div>
+
+              <div
+                class="card award-card p-4 rounded-lg flip-in-card"
+                style="transition-delay: 0.4s"
+              >
+                <p class="text-xl font-bold text-white flex items-center">
+                  🌎 Top 0.36% Globally
+                </p>
+                <p class="text-gray-300 text-sm">PicoCTF (41 / 11,517 teams)</p>
+                <p class="text-gray-400 mt-1">
+                  Exceptional performance in one of the largest high school
+                  Capture The Flag competitions worldwide.
+                </p>
+              </div>
+
+              <div
+                class="card award-card p-4 rounded-lg flip-in-card"
+                style="transition-delay: 0.5s"
+              >
+                <p class="text-xl font-bold text-white flex items-center">
+                  🏅 6th Place, Nationally
+                </p>
+                <p class="text-gray-300 text-sm">MagpieCTF</p>
+                <p class="text-gray-400 mt-1">
+                  Nationally ranked; writeup earned 2nd place, highlighting
+                  technical depth and problem-solving excellence.
+                </p>
+              </div>
+
+              <div
+                class="card award-card p-4 rounded-lg flip-in-card"
+                style="transition-delay: 0.6s"
+              >
+                <p class="text-xl font-bold text-white flex items-center">
+                  🥇 10th Place, Nationally
+                </p>
+                <p class="text-gray-300 text-sm">National Consortium CTF</p>
+                <p class="text-gray-400 mt-1">
+                  Team Captain; led high school team against graduate- and
+                  PhD-level competitors to 10th nationally.
+                </p>
+              </div>
+            </div>
+
+            <!-- Column 2: Computing & Hackathon Achievements -->
+            <div class="space-y-6">
+              <h3
+                class="text-2xl font-bold text-pink-400 border-b border-pink-400/50 pb-2 flex items-center"
+              >
+                <svg class="w-6 h-6 mr-2">
+                  <use xlink:href="#icon-code"></use>
+                </svg>
+                Computing & Innovation
+              </h3>
+
+              <div
+                class="card award-card p-4 rounded-lg flip-in-card"
+                style="transition-delay: 0.7s"
+              >
+                <p class="text-xl font-bold text-white flex items-center">
+                  🥇 1st Place, Standard Division
+                </p>
+                <p class="text-gray-300 text-sm">NatHacks 2025 (MedTech)</p>
+                <p class="text-gray-400 mt-1">
+                  Competed in an undivided field with graduate and PhD teams;
+                  developed a MedTech solution that impressed judges, securing
+                  first place.
+                </p>
+              </div>
+
+              <div
+                class="card award-card p-4 rounded-lg flip-in-card"
+                style="transition-delay: 0.8s"
+              >
+                <p class="text-xl font-bold text-white flex items-center">
+                  🔢 High Score: 71 / 75
+                </p>
+                <p class="text-gray-300 text-sm">
+                  Canadian Computing Competition (Junior)
+                </p>
+                <p class="text-gray-400 mt-1">
+                  Demonstrated strong algorithmic reasoning and problem-solving
+                  under competitive conditions.
+                </p>
+              </div>
+
+              <div
+                class="card award-card p-4 rounded-lg flip-in-card"
+                style="transition-delay: 0.9s"
+              >
+                <p class="text-xl font-bold text-white flex items-center">
+                  💻 Top 10, Provincial Programming
+                </p>
+                <p class="text-gray-300 text-sm">
+                  UAPC (University of Alberta Programming Contest)
+                </p>
+                <p class="text-gray-400 mt-1">
+                  Team Captain; guided team to top 10 in Alberta, competing with
+                  advanced collegiate-level programmers.
+                </p>
+              </div>
+            </div>
+
+            <!-- Column 3: Academic & Leadership Achievements -->
+            <div class="space-y-6">
+              <h3
+                class="text-2xl font-bold text-pink-400 border-b border-pink-400/50 pb-2 flex items-center"
+              >
+                <svg class="w-6 h-6 mr-2">
+                  <use xlink:href="#icon-trophy"></use>
+                </svg>
+                Academic & Leadership
+              </h3>
+
+              <div
+                class="card award-card p-4 rounded-lg flip-in-card"
+                style="transition-delay: 1s"
+              >
+                <p class="text-xl font-bold text-white">
+                  IB Certificate Student
+                </p>
+                <p class="text-gray-300 text-sm">Old Scona Academic</p>
+                <p class="text-gray-400 mt-1">
+                  Enrolled in rigorous Math, French, and Computer Science
+                  courses; consistently challenged at the highest academic
+                  level.
+                </p>
+              </div>
+
+              <div
+                class="card award-card p-4 rounded-lg flip-in-card"
+                style="transition-delay: 1.1s"
+              >
+                <p class="text-xl font-bold text-white">
+                  Air Cadets Leadership
+                </p>
+                <p class="text-gray-300 text-sm">287 Beaumont Squadron</p>
+                <p class="text-gray-400 mt-1">
+                  Company Warrant Officer; instructed and mentored 200+ cadets,
+                  completing 300+ service hours supporting leadership, aviation
+                  training, and community projects.
+                </p>
+              </div>
+
+              <div
+                class="card award-card p-4 rounded-lg flip-in-card"
+                style="transition-delay: 1.2s"
+              >
+                <p class="text-xl font-bold text-white">Most Hours Committed</p>
+                <p class="text-gray-300 text-sm">Life Long Learners Tutoring</p>
+                <p class="text-gray-400 mt-1">
+                  Tutored middle school students in Math, Science, and French
+                  for 130+ hours, raising grades by 1–3 letters; recognized for
+                  commitment and leadership in mentorship.
+                </p>
+              </div>
+
+              <div
+                class="card award-card p-4 rounded-lg flip-in-card"
+                style="transition-delay: 1.3s"
+              >
+                <p class="text-xl font-bold text-white">
+                  Advanced Policy Debater
+                </p>
+                <p class="text-gray-300 text-sm">HSMUN</p>
+                <p class="text-gray-400 mt-1">
+                  Represented a country in high-level Model UN; researched
+                  complex policies, negotiated resolutions, and contributed to
+                  international discourse.
+                </p>
+              </div>
+
+              <div
+                class="card award-card p-4 rounded-lg flip-in-card"
+                style="transition-delay: 1.4s"
+              >
+                <p class="text-xl font-bold text-white">
+                  Marksman Qualification
+                </p>
+                <p class="text-gray-300 text-sm">Air Cadets (2022)</p>
+                <p class="text-gray-400 mt-1">
+                  Achieved official marksmanship certification; recognized for
+                  precision, focus, and discipline.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ===== 6. CONTACT ===== -->
+      <!-- <section id="contact" class="page py-20 md:py-32 fade-in-section">
+        <div class="container mx-auto px-6 max-w-3xl">
+          <h2 class="text-4xl font-bold text-center text-white mb-4">
+            Let's <span>Collaborate</span>
+          </h2>
+          <p class="text-lg text-gray-300 text-center max-w-3xl mx-auto mb-16">
+            I'm actively seeking challenging projects, mentorship, and
+            opportunities in cybersecurity and software development.
+          </p> -->
+
+          <!-- Contact Form (Mailto)
+          <form
+            action="mailto:ahmad.abrar2385@gmail.com"
+            method="POST"
+            enctype="text/plain"
+            class="space-y-6"
+          >
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <!-- Name
+              <div>
+                <label
+                  for="name"
+                  class="block text-sm font-medium text-gray-300 mb-2"
+                  >Your Name</label
+                >
+                <input
+                  type="text"
+                  id="name"
+                  name="name"
+                  required
+                  class="w-full bg-gray-900 border border-gray-700 rounded-lg p-3 text-gray-200 focus:outline-none focus:ring-2 focus:ring-pink-400 transition-all"
+                />
+              </div>
+              <!-- Email -->
+          <!-- <div>
+                <label
+                  for="email"
+                  class="block text-sm font-medium text-gray-300 mb-2"
+                  >Your Email</label
+                >
+                <input
+                  type="email"
+                  id="email"
+                  name="email"
+                  required
+                  class="w-full bg-gray-900 border border-gray-700 rounded-lg p-3 text-gray-200 focus:outline-none focus:ring-2 focus:ring-pink-400 transition-all"
+                />
+              </div>
+            </div> -->
+          -->
+
+          <!-- Subject -->
+          <!-- <div>
+              <label
+                for="subject"
+                class="block text-sm font-medium text-gray-300 mb-2"
+                >Subject</label
+              >
+              <input
+                type="text"
+                id="subject"
+                name="subject"
+                required
+                class="w-full bg-gray-900 border border-gray-700 rounded-lg p-3 text-gray-200 focus:outline-none focus:ring-2 focus:ring-pink-400 transition-all"
+              />
+            </div> -->
+
+          <!-- Message -->
+          <!-- <div>
+              <label
+                for="message"
+                class="block text-sm font-medium text-gray-300 mb-2"
+                >Your Message</label
+              >
+              <textarea
+                id="message"
+                name="message"
+                rows="5"
+                required
+                class="w-full bg-gray-900 border border-gray-700 rounded-lg p-3 text-gray-200 focus:outline-none focus:ring-2 focus:ring-pink-400 transition-all"
+              ></textarea>
+            </div> -->
+
+          <!-- Submit Button -->
+          <!-- <div class="text-center">
+              <button
+                type="submit"
+                class="bg-pink-500 text-black px-8 py-3 rounded-md font-semibold text-lg transition-all"
+              >
+                Send Message
+              </button>
+            </div>
+          </form> -->
+          -->
+
+          <!-- Social/External Links -->
+          <div class="mt-12 text-center">
+            <h3 class="text-xl font-bold text-white mb-4">Or Connect Here</h3>
+            <div class="flex justify-center space-x-6">
+              <a
+                href="https://github.com/Akari-08"
+                target="_blank"
+                class="text-gray-400 hover:text-pink-400 transition"
+              >
+                <span class="text-2xl font-bold">GitHub</span>
+              </a>
+              <a
+                href="https://www.linkedin.com/in/ahmad-abrar-2917972b6/"
+                target="_blank"
+                class="text-gray-400 hover:text-pink-400 transition"
+              >
+                <span class="text-2xl font-bold">LinkedIn</span>
+              </a>
+              <a
+                href="/mock-resume.pdf"
+                target="_blank"
+                class="text-gray-400 hover:text-pink-400 transition"
+              >
+                <span class="text-2xl font-bold">Resume (PDF)</span>
+              </a>
+            </div>
+          </div>
+        </div>
+      </section>
     </main>
 
-    <!-- Simple Footer -->
-    <footer class="bg-black/50 border-t border-white/10 py-8 text-center relative z-10">
-        <p class="text-gray-500">&copy; <span id="copyright-year"></span> Ahmad Abrar. All rights reserved.</p>
+    <!-- 7. Footer -->
+    <footer
+      class="bg-black/50 border-t border-white/10 py-8 text-center relative z-10"
+    >
+      <p class="text-gray-500 mb-2">
+        Ahmad Abrar – High School Student | Web Developer | Cybersecurity
+        Enthusiast | Edmonton, AB
+      </p>
+      <p class="text-gray-500">
+        &copy; <span id="copyright-year"></span> Ahmad Abrar. All rights
+        reserved.
+      </p>
     </footer>
-
 
     <!-- Three.js and OrbitControls Imports -->
     <script type="importmap">
-    {
+      {
         "imports": {
-            "three": "https://cdn.skypack.dev/three@0.132.2"
+          "three": "https://cdn.skypack.dev/three@0.132.2"
         }
-    }
+      }
     </script>
 
     <!-- Main JS (Navigation & Three.js) -->
-    <script type="module">
-        import * as THREE from 'three';
-
-        /* ===== Navigation & Scroll Logic ===== */
-        const navLinks = document.querySelectorAll('.nav-link');
-        const headerLinks = document.querySelectorAll('.nav-link-header, a[href="#experience"], a[href="#contact"]');
-        const mobileMenuBtn = document.getElementById('mobile-menu-btn');
-        const mobileMenu = document.getElementById('mobile-menu');
-        const sections = document.querySelectorAll('section[id]'); 
-        const headerOffset = 70;
-        const homeSection = document.getElementById('home');
-        const canvas = document.getElementById('pagoda-canvas');
-
-        function updateActiveLink(targetId) {
-            navLinks.forEach(link => {
-                link.classList.remove('active');
-                if (link.getAttribute('href') === targetId) {
-                    link.classList.add('active');
-                }
-            });
-        }
-
-        // Handle navigation clicks
-        [...navLinks, ...headerLinks].forEach(link => {
-            link.addEventListener('click', () => {
-                mobileMenu.classList.add('hidden');
-            });
-        });
-
-        // Scroll listener to update active link and parallax
-        window.addEventListener('scroll', () => {
-            let current = '';
-            const scrollY = window.scrollY;
-
-            sections.forEach(section => {
-                const sectionTop = section.offsetTop;
-                if (scrollY >= sectionTop - headerOffset) {
-                    current = '#' + section.getAttribute('id');
-                }
-            });
-
-            // Parallax Effect for 3D canvas (vertical position)
-            if (scrollY < homeSection.offsetHeight) {
-                if (canvas) {
-                    canvas.style.transform = `translateY(${scrollY * 0.4}px)`;
-                    canvas.style.opacity = 0.7 - (scrollY / (homeSection.offsetHeight * 0.8));
-                }
-            }
-
-            if (current) {
-                 updateActiveLink(current);
-            }
-        });
-
-        // Mobile menu toggle
-        mobileMenuBtn.addEventListener('click', () => {
-            mobileMenu.classList.toggle('hidden');
-        });
-
-        // Set current year in footer
-        document.getElementById('copyright-year').textContent = new Date().getFullYear();
-
-        /* ===== Scroll Fade-In/Flip-In Animation ===== */
-        const sectionsToAnimate = document.querySelectorAll('.fade-in-section, .flip-in-card');
-        
-        const observerOptions = {
-            root: null,
-            rootMargin: '0px',
-            threshold: 0.15
-        };
-
-        const observer = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    entry.target.classList.add('is-visible');
-                    // observer.unobserve(entry.target); // Uncomment to run animation only once
-                }
-            });
-        }, observerOptions);
-
-        sectionsToAnimate.forEach(section => {
-            observer.observe(section);
-        });
-
-
-        /* ===== Three.js Scene (Crystal & Petals) ===== */
-        let scene, camera, renderer, crystal, petals;
-        const canvasContainer = document.getElementById('pagoda-canvas');
-        
-        // --- New Variables for Mouse Follow ---
-        let targetRotationX = 0;
-        let targetRotationY = 0;
-        const rotationSpeed = 0.005; 
-        const followDamping = 0.05; // How quickly the object follows the mouse
-
-        function initThreeJS() {
-            // Scene
-            scene = new THREE.Scene();
-
-            // Camera
-            camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-            camera.position.set(0, 0, 5);
-            camera.lookAt(0, 0, 0);
-
-            // Renderer
-            renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
-            renderer.setSize(window.innerWidth, window.innerHeight);
-            renderer.setPixelRatio(window.devicePixelRatio);
-            if (canvasContainer) {
-                canvasContainer.appendChild(renderer.domElement);
-            }
-
-            // Lighting
-            const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
-            scene.add(ambientLight);
-            
-            const hemisphereLight = new THREE.HemisphereLight(0xfbcfe8, 0x330011, 1);
-            scene.add(hemisphereLight);
-
-            // Create Crystal (Wireframe Icosahedron)
-            const crystalGeo = new THREE.IcosahedronGeometry(2, 0);
-            const crystalMat = new THREE.MeshStandardMaterial({ 
-                color: 0xf472b6,
-                emissive: 0xec4899,
-                emissiveIntensity: 1,
-                wireframe: true,
-                transparent: true,
-                opacity: 0.8
-            });
-            crystal = new THREE.Mesh(crystalGeo, crystalMat);
-            scene.add(crystal);
-
-            // Create Sakura Petals (Particle System)
-            createPetals();
-
-            // Event Listeners for Parallax Rotation
-            window.addEventListener('mousemove', onMouseMoveParallax, false);
-            window.addEventListener('touchmove', onTouchMoveParallax, false);
-            window.addEventListener('resize', onWindowResize);
-            
-            // Start animation
-            animate();
-        }
-
-        function createPetals() {
-            const petalCount = 500;
-            const vertices = [];
-            for (let i = 0; i < petalCount; i++) {
-                const x = (Math.random() - 0.5) * 20; 
-                const y = Math.random() * 20 - 10; 
-                const z = (Math.random() - 0.5) * 20; 
-                vertices.push(x, y, z);
-            }
-            
-            const geometry = new THREE.BufferGeometry();
-            // Corrected Buffer Attribute
-            geometry.setAttribute('position', new THREE.Float32BufferAttribute(vertices, 3));
-            
-            const material = new THREE.PointsMaterial({
-                color: 0xfbcfe8,
-                size: 0.03,
-                transparent: true,
-                opacity: 0.7,
-                blending: THREE.AdditiveBlending,
-                depthWrite: false
-            });
-            
-            petals = new THREE.Points(geometry, material);
-            scene.add(petals);
-        }
-
-        function onWindowResize() {
-            camera.aspect = window.innerWidth / window.innerHeight;
-            camera.updateProjectionMatrix();
-            renderer.setSize(window.innerWidth, window.innerHeight);
-        }
-        
-        /**
-         * Calculates target rotation based on normalized mouse position.
-         */
-        function onMouseMoveParallax(event) {
-            // Normalize mouse position (-1 to 1)
-            const normalizedX = (event.clientX / window.innerWidth) * 2 - 1;
-            const normalizedY = (event.clientY / window.innerHeight) * 2 - 1;
-
-            // X mouse movement controls Y rotation, Y mouse movement controls X rotation
-            // The scaling factor (0.5) determines the maximum rotation offset.
-            targetRotationY = normalizedX * -0.5; 
-            targetRotationX = normalizedY * -0.5; 
-        }
-
-        /**
-         * Calculates target rotation based on normalized touch position.
-         */
-        function onTouchMoveParallax(event) {
-            if (event.touches.length === 1) {
-                const touch = event.touches[0];
-                const normalizedX = (touch.clientX / window.innerWidth) * 2 - 1;
-                const normalizedY = (touch.clientY / window.innerHeight) * 2 - 1;
-
-                targetRotationY = normalizedX * -0.5;
-                targetRotationX = normalizedY * -0.5;
-                event.preventDefault(); // Prevent scrolling while interacting
-            }
-        }
-
-
-        function animate() {
-            requestAnimationFrame(animate);
-            
-            if (crystal) {
-                // 1. Passive continuous rotation (slow)
-                crystal.rotation.x += rotationSpeed * 0.05;
-                crystal.rotation.y += rotationSpeed * 0.1;
-                
-                // 2. Mouse Parallax/Follow Effect: Interpolate towards target
-                // This creates a smooth, dampened rotation as the mouse moves.
-                crystal.rotation.x += (targetRotationX - crystal.rotation.x) * followDamping;
-                crystal.rotation.y += (targetRotationY - crystal.rotation.y) * followDamping;
-            }
-
-            // Animate petals (falling and swirling)
-            if (petals) {
-                const positions = petals.geometry.attributes.position.array;
-                const time = Date.now() * 0.0001;
-                
-                for (let i = 0; i < positions.length; i += 3) {
-                    positions[i + 1] -= 0.01; 
-                    
-                    positions[i] += Math.sin(positions[i + 1] * 0.5 + time) * 0.002;
-                    positions[i + 2] += Math.cos(positions[i + 1] * 0.4 + time) * 0.002;
-                    
-                    // Reset at bottom
-                    if (positions[i + 1] < -10) { 
-                        positions[i + 1] = 10;
-                        positions[i] = (Math.random() - 0.5) * 20;
-                        positions[i + 2] = (Math.random() - 0.5) * 20;
-                    }
-                }
-                petals.geometry.attributes.position.needsUpdate = true;
-            }
-
-            renderer.render(scene, camera);
-        }
-
-        // Initialize Three.js on load
-        if (canvasContainer) {
-            initThreeJS();
-        }
-
-        /* ===== Preloader Logic ===== */
-        window.onload = () => {
-            const preloader = document.getElementById('preloader');
-            if (preloader) {
-                preloader.classList.add('loaded');
-                
-                setTimeout(() => {
-                    if (preloader) {
-                        preloader.remove();
-                    }
-                }, 600);
-            }
-        };
-
-    </script>
-
-</body>
+    <script type="module" src="script.js"></script>
+  </body>
 </html>
