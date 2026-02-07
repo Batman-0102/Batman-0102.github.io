@@ -361,9 +361,6 @@ function initThreeJS() {
 
     // Event Listeners
     window.addEventListener("mousemove", onMouseMoveParallax, false);
-    window.addEventListener("touchmove", onTouchMoveParallax, {
-        passive: false,
-    });
     window.addEventListener("resize", onWindowResize);
 
     animate();
@@ -415,16 +412,8 @@ function onMouseMoveParallax(event) {
     targetRotationX = normalizedY * -0.4;
 }
 
-function onTouchMoveParallax(event) {
-    if (event.touches.length === 1) {
-        const touch = event.touches[0];
-        const normalizedX = (touch.clientX / window.innerWidth) * 2 - 1;
-        const normalizedY = (touch.clientY / window.innerHeight) * 2 - 1;
-        targetRotationY = normalizedX * -0.4;
-        targetRotationX = normalizedY * -0.4;
-        event.preventDefault();
-    }
-}
+// Touch parallax disabled — conflicts with native scroll on mobile.
+// Crystal uses device orientation or stays in its default rotation on touch devices.
 
 function animate() {
     requestAnimationFrame(animate);
