@@ -1,8 +1,7 @@
 import * as THREE from "three";
 
 /* ================================================================
-   AHMAD ABRAR — CINEMATIC PORTFOLIO  
-   Motion Design & Interaction Engine
+script.js
    ================================================================ */
 
 /* ===== Custom Cursor ===== */
