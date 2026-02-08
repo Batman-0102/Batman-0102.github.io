@@ -727,6 +727,9 @@ header.scrolled {
     border-radius: var(--radius-sm);
     transition: transform 0.6s var(--transition-smooth);
 }
+.card-image.hidden {
+    display: none;
+}
 .card:hover .card-image {
     transform: scale(1.03);
 }
@@ -735,6 +738,176 @@ header.scrolled {
     border-radius: var(--radius-sm);
     margin-bottom: 20px;
     position: relative;
+}
+
+/* Animated fallback placeholder for missing project images */
+.card-image-fallback {
+    display: none;
+    width: 100%;
+    aspect-ratio: 16/9;
+    border-radius: var(--radius-sm);
+    background: linear-gradient(135deg, #0d0d14 0%, #161625 50%, #0d0d14 100%);
+    position: relative;
+    overflow: hidden;
+}
+.card-image-fallback.active {
+    display: block;
+}
+.card:hover .card-image-fallback {
+    /* subtle zoom like the real image */
+    transform: scale(1.03);
+    transition: transform 0.6s var(--transition-smooth);
+}
+
+/* Floating orbs */
+.card-image-fallback::before,
+.card-image-fallback::after {
+    content: "";
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(40px);
+    opacity: 0.5;
+    animation: fallbackOrb1 8s ease-in-out infinite alternate;
+}
+.card-image-fallback::before {
+    width: 45%;
+    height: 70%;
+    background: radial-gradient(circle, var(--pink) 0%, transparent 70%);
+    top: 10%;
+    left: 15%;
+}
+.card-image-fallback::after {
+    width: 40%;
+    height: 65%;
+    background: radial-gradient(
+        circle,
+        rgba(139, 92, 246, 0.6) 0%,
+        transparent 70%
+    );
+    bottom: 5%;
+    right: 10%;
+    animation: fallbackOrb2 10s ease-in-out infinite alternate;
+}
+
+/* Grid lines overlay */
+.fallback-grid {
+    position: absolute;
+    inset: 0;
+    background-image:
+        linear-gradient(rgba(244, 114, 182, 0.04) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(244, 114, 182, 0.04) 1px, transparent 1px);
+    background-size: 32px 32px;
+    mask-image: radial-gradient(
+        ellipse 60% 60% at 50% 50%,
+        black 20%,
+        transparent 70%
+    );
+    -webkit-mask-image: radial-gradient(
+        ellipse 60% 60% at 50% 50%,
+        black 20%,
+        transparent 70%
+    );
+}
+
+/* Scanning line */
+.fallback-scan {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+        180deg,
+        transparent 0%,
+        rgba(244, 114, 182, 0.06) 50%,
+        transparent 100%
+    );
+    background-size: 100% 40%;
+    background-repeat: no-repeat;
+    animation: fallbackScan 4s ease-in-out infinite;
+}
+
+/* Corner brackets */
+.fallback-brackets::before,
+.fallback-brackets::after {
+    content: "";
+    position: absolute;
+    width: 24px;
+    height: 24px;
+    border-color: rgba(244, 114, 182, 0.25);
+    border-style: solid;
+}
+.fallback-brackets::before {
+    top: 16px;
+    left: 16px;
+    border-width: 2px 0 0 2px;
+}
+.fallback-brackets::after {
+    bottom: 16px;
+    right: 16px;
+    border-width: 0 2px 2px 0;
+}
+
+/* Center icon pulse */
+.fallback-icon {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.fallback-icon svg {
+    width: 36px;
+    height: 36px;
+    color: rgba(244, 114, 182, 0.3);
+    animation: fallbackPulse 3s ease-in-out infinite;
+}
+
+@keyframes fallbackOrb1 {
+    0% {
+        transform: translate(0, 0) scale(1);
+        opacity: 0.4;
+    }
+    50% {
+        transform: translate(15%, 10%) scale(1.2);
+        opacity: 0.6;
+    }
+    100% {
+        transform: translate(-10%, -5%) scale(0.9);
+        opacity: 0.35;
+    }
+}
+@keyframes fallbackOrb2 {
+    0% {
+        transform: translate(0, 0) scale(1);
+        opacity: 0.35;
+    }
+    50% {
+        transform: translate(-20%, -10%) scale(1.15);
+        opacity: 0.55;
+    }
+    100% {
+        transform: translate(10%, 5%) scale(0.95);
+        opacity: 0.4;
+    }
+}
+@keyframes fallbackScan {
+    0% {
+        background-position: 0 -40%;
+    }
+    100% {
+        background-position: 0 140%;
+    }
+}
+@keyframes fallbackPulse {
+    0%,
+    100% {
+        opacity: 0.3;
+        transform: translate(-50%, -50%) scale(1);
+    }
+    50% {
+        opacity: 0.6;
+        transform: translate(-50%, -50%) scale(1.1);
+    }
 }
 
 /* Project status badge */
@@ -825,6 +998,27 @@ header.scrolled {
     font-style: normal;
     color: var(--pink-light);
     font-weight: 500;
+}
+
+/* About social links */
+.about-social-link {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    border-radius: 12px;
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    color: var(--text-muted);
+    transition: all 0.3s var(--transition-smooth);
+}
+.about-social-link:hover {
+    color: var(--pink);
+    border-color: var(--border-hover);
+    background: rgba(244, 114, 182, 0.08);
+    transform: translateY(-3px);
+    box-shadow: 0 6px 20px rgba(244, 114, 182, 0.15);
 }
 
 /* Skill cards */
